@@ -22,15 +22,5 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ],
-  "categories": ["productivity", "utilities"],
-  "shortcuts": [
-    {
-      "name": "Добавить задачу",
-      "short_name": "Задача",
-      "description": "Быстрое добавление задачи",
-      "url": "/?action=new",
-      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
-    }
   ]
 }

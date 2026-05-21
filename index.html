@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#3d4fd4">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Планировщик">
+<meta name="description" content="Умный планировщик задач с голосовым вводом">
+<title>PESKOV Smart Planner</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<style>
+  :root {
+    --bg: #0f172a;
+    --bg2: #1e293b;
+    --bg3: #0d1117;
+    --accent: #3d4fd4;
+    --accent2: #5c6bc0;
+    --text: #f1f5f9;
+    --text2: #94a3b8;
+    --text3: #64748b;
+    --border: #1e2d45;
+    --red: #ef4444;
+    --green: #10b981;
+    --yellow: #f59e0b;
+    --radius: 12px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 15px; min-height: 100vh; overflow-x: hidden; }
+
+  /* HEADER */
+  .header { background: var(--bg3); padding: 12px 16px 0; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--border); }
+  .header-top { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .app-logo { width: 36px; height: 36px; border-radius: 9px; overflow: hidden; flex-shrink: 0; }
+  .app-logo img { width: 100%; height: 100%; display: block; }
+  .app-title { font-size: 15px; font-weight: 700; color: var(--text); }
+  .app-sub { font-size: 11px; color: var(--text3); }
+  .header-right { margin-left: auto; display: flex; gap: 8px; }
+  .btn-icon { background: none; border: none; color: var(--text2); font-size: 20px; padding: 6px; cursor: pointer; border-radius: 8px; }
+  .btn-icon:active { background: var(--bg2); }
+
+  /* DATE STRIP */
+  .date-strip { display: flex; gap: 4px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
+  .date-strip::-webkit-scrollbar { display: none; }
+  .day-pill { min-width: 40px; text-align: center; padding: 6px 4px; border-radius: 10px; cursor: pointer; flex-shrink: 0; transition: background .15s; }
+  .day-pill.active { background: var(--accent); }
+  .day-pill:not(.active):hover { background: var(--bg2); }
+  .day-name { font-size: 10px; color: var(--text3); margin-bottom: 2px; }
+  .day-pill.active .day-name { color: rgba(255,255,255,.7); }
+  .day-num { font-size: 13px; font-weight: 600; }
+  .day-dot { width: 4px; height: 4px; background: var(--accent2); border-radius: 50%; margin: 2px auto 0; }
+  .day-pill.active .day-dot { background: #fff; }
+
+  /* MAIN */
+  main { padding: 12px 16px 90px; }
+  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; margin-top: 16px; }
+  .section-title { font-size: 12px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: .8px; }
+  .section-count { font-size: 12px; color: var(--text3); }
+
+  /* TASK CARD */
+  .task-card { background: var(--bg2); border-radius: var(--radius); padding: 12px 14px; margin-bottom: 8px; border-left: 3px solid var(--accent); display: flex; align-items: flex-start; gap: 10px; cursor: pointer; transition: transform .1s; }
+  .task-card:active { transform: scale(.98); }
+  .task-card.done { border-left-color: var(--green); opacity: .65; }
+  .task-card.urgent { border-left-color: var(--red); }
+  .task-card.medium { border-left-color: var(--yellow); }
+  .task-check { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--text3); flex-shrink: 0; margin-top: 2px; display: flex; align-items: center; justify-content: center; font-size: 12px; transition: all .15s; }
+  .task-card.done .task-check { background: var(--green); border-color: var(--green); }
+  .task-body { flex: 1; min-width: 0; }
+  .task-name { font-size: 14px; font-weight: 500; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .task-card.done .task-name { text-decoration: line-through; color: var(--text3); }
+  .task-meta { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .task-time { font-size: 11px; color: var(--text3); }
+  .task-badge { font-size: 10px; padding: 2px 7px; border-radius: 5px; background: rgba(61,79,212,.2); color: var(--accent2); }
+  .task-badge.urgent { background: rgba(239,68,68,.15); color: #f87171; }
+  .task-badge.done { background: rgba(16,185,129,.15); color: #34d399; }
+  .task-badge.medium { background: rgba(245,158,11,.15); color: #fbbf24; }
+  .task-mic { background: none; border: none; color: var(--text3); font-size: 16px; padding: 4px; cursor: pointer; border-radius: 6px; flex-shrink: 0; }
+  .task-mic:hover { color: var(--accent); }
+
+  /* EMPTY STATE */
+  .empty { text-align: center; padding: 40px 20px; }
+  .empty-icon { font-size: 40px; margin-bottom: 12px; }
+  .empty-text { font-size: 14px; color: var(--text3); }
+
+  /* STATS BAR */
+  .stats-bar { background: var(--bg2); border-radius: var(--radius); padding: 12px 16px; display: flex; justify-content: space-around; margin-bottom: 4px; }
+  .stat-item { text-align: center; }
+  .stat-num { font-size: 20px; font-weight: 700; color: var(--accent); }
+  .stat-label { font-size: 10px; color: var(--text3); margin-top: 2px; }
+
+  /* FAB + MIC */
+  .fab { position: fixed; bottom: 80px; right: 20px; width: 52px; height: 52px; background: var(--accent); border: none; border-radius: 50%; color: #fff; font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(61,79,212,.5); z-index: 200; transition: transform .15s; }
+  .fab:active { transform: scale(.92); }
+  .fab-mic { position: fixed; bottom: 80px; right: 82px; width: 44px; height: 44px; background: var(--bg2); border: 1px solid var(--border); border-radius: 50%; color: var(--text2); font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 200; transition: all .15s; }
+  .fab-mic.listening { background: #dc2626; border-color: #dc2626; color: #fff; animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(220,38,38,.4)} 50%{box-shadow:0 0 0 10px rgba(220,38,38,0)} }
+
+  /* BOTTOM NAV */
+  .bnav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg3); border-top: 1px solid var(--border); display: flex; padding: 6px 0 env(safe-area-inset-bottom); z-index: 300; }
+  .bnav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 0; cursor: pointer; color: var(--text3); font-size: 10px; border: none; background: none; transition: color .15s; }
+  .bnav-item.active { color: var(--accent); }
+  .bnav-icon { font-size: 20px; }
+
+  /* MODAL */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.7); z-index: 500; align-items: flex-end; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: var(--bg2); border-radius: 20px 20px 0 0; padding: 20px 20px 40px; width: 100%; max-height: 90vh; overflow-y: auto; }
+  .modal-title { font-size: 16px; font-weight: 700; margin-bottom: 16px; }
+  .modal-close { float: right; background: none; border: none; color: var(--text2); font-size: 22px; cursor: pointer; margin-top: -4px; }
+  .form-group { margin-bottom: 14px; }
+  .form-label { font-size: 12px; color: var(--text3); margin-bottom: 6px; display: block; }
+  .form-input { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; color: var(--text); font-size: 14px; outline: none; }
+  .form-input:focus { border-color: var(--accent); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .priority-row { display: flex; gap: 8px; }
+  .priority-btn { flex: 1; padding: 8px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg3); color: var(--text2); font-size: 12px; cursor: pointer; text-align: center; transition: all .15s; }
+  .priority-btn.sel-low { background: rgba(16,185,129,.15); border-color: var(--green); color: #34d399; }
+  .priority-btn.sel-medium { background: rgba(245,158,11,.15); border-color: var(--yellow); color: #fbbf24; }
+  .priority-btn.sel-urgent { background: rgba(239,68,68,.15); border-color: var(--red); color: #f87171; }
+  .btn-primary { width: 100%; padding: 13px; background: var(--accent); border: none; border-radius: 12px; color: #fff; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 8px; }
+  .btn-primary:active { opacity: .85; }
+
+  /* VOICE MODAL */
+  .voice-modal { background: var(--bg2); border-radius: 20px 20px 0 0; padding: 24px 20px 40px; width: 100%; text-align: center; }
+  .voice-animation { width: 80px; height: 80px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 36px; margin: 0 auto 16px; }
+  .voice-text { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+  .voice-hint { font-size: 13px; color: var(--text3); margin-bottom: 20px; }
+  .voice-result { background: var(--bg3); border-radius: 10px; padding: 12px; font-size: 13px; color: var(--text2); min-height: 50px; margin-bottom: 16px; text-align: left; }
+  .btn-danger { width: 100%; padding: 13px; background: #dc2626; border: none; border-radius: 12px; color: #fff; font-size: 15px; font-weight: 600; cursor: pointer; }
+
+  /* LANG */
+  .lang-bar { display: flex; gap: 6px; margin-bottom: 12px; }
+  .lang-btn { padding: 4px 12px; border-radius: 20px; border: 1px solid var(--border); background: var(--bg3); color: var(--text2); font-size: 12px; cursor: pointer; }
+  .lang-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  /* TOAST */
+  .toast { position: fixed; top: 70px; left: 50%; transform: translateX(-50%); background: var(--bg2); border: 1px solid var(--border); color: var(--text); font-size: 13px; padding: 10px 18px; border-radius: 20px; z-index: 999; opacity: 0; transition: opacity .3s; pointer-events: none; white-space: nowrap; }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-top">
+    <div class="app-logo"><img src="icon-192.png" alt="Песков"></div>
+    <div>
+      <div class="app-title">PESKOV Planner</div>
+      <div class="app-sub" id="todayLabel">Загрузка...</div>
+    </div>
+    <div class="header-right">
+      <div class="lang-bar">
+        <button class="lang-btn active" onclick="setLang('ru')">RU</button>
+        <button class="lang-btn" onclick="setLang('en')">EN</button>
+        <button class="lang-btn" onclick="setLang('uz')">UZ</button>
+      </div>
+    </div>
+  </div>
+  <div class="date-strip" id="dateStrip"></div>
+</div>
+
+<main id="mainContent"></main>
+
+<!-- FAB -->
+<button class="fab-mic" id="fabMic" onclick="openVoice()" title="Голосовой ввод">🎙</button>
+<button class="fab" onclick="openAddModal()" title="Добавить задачу">+</button>
+
+<!-- BOTTOM NAV -->
+<nav class="bnav">
+  <button class="bnav-item active" id="nav0" onclick="setTab(0)"><span class="bnav-icon">🏠</span><span id="navLabel0">Главная</span></button>
+  <button class="bnav-item" id="nav1" onclick="setTab(1)"><span class="bnav-icon">📅</span><span id="navLabel1">Все</span></button>
+  <button class="bnav-item" id="nav2" onclick="setTab(2)"><span class="bnav-icon">📊</span><span id="navLabel2">Статистика</span></button>
+  <button class="bnav-item" id="nav3" onclick="setTab(3)"><span class="bnav-icon">⚙️</span><span id="navLabel3">Настройки</span></button>
+</nav>
+
+<!-- ADD TASK MODAL -->
+<div class="modal-overlay" id="addModal">
+  <div class="modal">
+    <div class="modal-title" id="addModalTitle">Новая задача<button class="modal-close" onclick="closeModal('addModal')">✕</button></div>
+    <div class="form-group">
+      <label class="form-label" id="lbl_name">Название</label>
+      <input class="form-input" id="taskName" placeholder="Что нужно сделать?">
+    </div>
+    <div class="form-group">
+      <label class="form-label" id="lbl_note">Заметка</label>
+      <input class="form-input" id="taskNote" placeholder="Дополнительно...">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label" id="lbl_date">Дата</label>
+        <input class="form-input" id="taskDate" type="date">
+      </div>
+      <div class="form-group">
+        <label class="form-label" id="lbl_time">Время</label>
+        <input class="form-input" id="taskTime" type="time">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label" id="lbl_priority">Приоритет</label>
+      <div class="priority-row">
+        <button class="priority-btn" id="p_low" onclick="selectPriority('low')">✅ Обычный</button>
+        <button class="priority-btn" id="p_medium" onclick="selectPriority('medium')">⚠️ Средний</button>
+        <button class="priority-btn" id="p_urgent" onclick="selectPriority('urgent')">🔴 Срочный</button>
+      </div>
+    </div>
+    <button class="btn-primary" id="saveTaskBtn" onclick="saveTask()">Сохранить</button>
+  </div>
+</div>
+
+<!-- VOICE MODAL -->
+<div class="modal-overlay" id="voiceModal">
+  <div class="voice-modal">
+    <div class="voice-animation" id="voiceAnim">🎙</div>
+    <div class="voice-text" id="voiceTitle">Говорите...</div>
+    <div class="voice-hint" id="voiceHint">Например: «Встреча завтра в 14:00»</div>
+    <div class="voice-result" id="voiceResult">Ожидаю речь...</div>
+    <button class="btn-danger" onclick="stopVoice()">Остановить</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ================== DATA ==================
+let tasks = JSON.parse(localStorage.getItem('peskov_tasks') || '[]');
+let selectedDate = new Date();
+let currentTab = 0;
+let currentPriority = 'low';
+let lang = localStorage.getItem('peskov_lang') || 'ru';
+let editId = null;
+let recognition = null;
+let isListening = false;
+
+const T = {
+  ru: {
+    today: 'Сегодня', tomorrow: 'Завтра', tasks: 'задач', done: 'выполнено',
+    add: 'Новая задача', save: 'Сохранить', name: 'Название', note: 'Заметка',
+    date: 'Дата', time: 'Время', priority: 'Приоритет', empty: 'Нет задач на этот день',
+    home: 'Главная', all: 'Все', stats: 'Статистика', settings: 'Настройки',
+    total: 'Всего', completed: 'Выполнено', pending: 'В работе', urgent_c: 'Срочных',
+    speaking: 'Говорите...', voiceHint: 'Например: «Встреча завтра в 14:00»', stop: 'Остановить',
+    saved: 'Задача сохранена!', deleted: 'Удалено', completed_t: 'Выполнено!',
+    noSpeech: 'Речь не обнаружена', noMic: 'Нет доступа к микрофону',
+    exportDone: 'Экспорт выполнен',
+  },
+  en: {
+    today: 'Today', tomorrow: 'Tomorrow', tasks: 'tasks', done: 'done',
+    add: 'New Task', save: 'Save', name: 'Title', note: 'Note',
+    date: 'Date', time: 'Time', priority: 'Priority', empty: 'No tasks for this day',
+    home: 'Home', all: 'All', stats: 'Stats', settings: 'Settings',
+    total: 'Total', completed: 'Done', pending: 'Pending', urgent_c: 'Urgent',
+    speaking: 'Speaking...', voiceHint: 'E.g.: "Meeting tomorrow at 2pm"', stop: 'Stop',
+    saved: 'Task saved!', deleted: 'Deleted', completed_t: 'Done!',
+    noSpeech: 'No speech detected', noMic: 'No microphone access',
+    exportDone: 'Export done',
+  },
+  uz: {
+    today: 'Bugun', tomorrow: 'Ertaga', tasks: "vazifa", done: 'bajarildi',
+    add: "Yangi vazifa", save: 'Saqlash', name: 'Nomi', note: 'Izoh',
+    date: 'Sana', time: 'Vaqt', priority: 'Muhimlik', empty: 'Bu kun uchun vazifalar yo\'q',
+    home: 'Asosiy', all: 'Hammasi', stats: 'Statistika', settings: 'Sozlamalar',
+    total: 'Jami', completed: 'Bajarilgan', pending: 'Jarayonda', urgent_c: 'Shoshilinch',
+    speaking: 'Gapiring...', voiceHint: 'Masalan: "Ertaga soat 14:00 da uchrashuv"', stop: 'To\'xtatish',
+    saved: 'Vazifa saqlandi!', deleted: 'O\'chirildi', completed_t: 'Bajarildi!',
+    noSpeech: 'Nutq aniqlanmadi', noMic: 'Mikrofonga ruxsat yo\'q',
+    exportDone: 'Eksport tayyor',
+  }
+};
+
+function t(key) { return (T[lang] && T[lang][key]) || T.ru[key] || key; }
+
+// ================== DATES ==================
+function fmtDate(d) {
+  return d.toISOString().split('T')[0];
+}
+function isToday(d) { return fmtDate(d) === fmtDate(new Date()); }
+function isTomorrow(d) {
+  const tom = new Date(); tom.setDate(tom.getDate()+1);
+  return fmtDate(d) === fmtDate(tom);
+}
+function ru_day(d) { return ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'][d.getDay()]; }
+function en_day(d) { return ['Su','Mo','Tu','We','Th','Fr','Sa'][d.getDay()]; }
+function uz_day(d) { return ['Ya','Du','Se','Ch','Pa','Ju','Sh'][d.getDay()]; }
+function dayLabel(d) {
+  if (lang==='en') return en_day(d);
+  if (lang==='uz') return uz_day(d);
+  return ru_day(d);
+}
+
+// ================== RENDER DATES ==================
+function renderDates() {
+  const strip = document.getElementById('dateStrip');
+  strip.innerHTML = '';
+  const today = new Date();
+  for (let i = -3; i <= 14; i++) {
+    const d = new Date(today);
+    d.setDate(today.getDate() + i);
+    const sel = fmtDate(d) === fmtDate(selectedDate);
+    const hasTasks = tasks.some(t => t.date === fmtDate(d));
+    const pill = document.createElement('div');
+    pill.className = 'day-pill' + (sel ? ' active' : '');
+    pill.innerHTML = `<div class="day-name">${dayLabel(d)}</div><div class="day-num">${d.getDate()}</div>${hasTasks ? '<div class="day-dot"></div>' : '<div style="height:6px"></div>'}`;
+    pill.onclick = () => { selectedDate = d; renderDates(); renderMain(); };
+    strip.appendChild(pill);
+  }
+  // scroll to selected
+  const idx = document.querySelectorAll('.day-pill');
+  const activeEl = strip.querySelector('.active');
+  if (activeEl) activeEl.scrollIntoView({behavior:'smooth', inline:'center', block:'nearest'});
+
+  // today label
+  const label = isToday(selectedDate) ? t('today') : isTomorrow(selectedDate) ? t('tomorrow') : selectedDate.toLocaleDateString(lang==='en'?'en-GB':lang==='uz'?'uz-UZ':'ru-RU',{day:'numeric',month:'long'});
+  document.getElementById('todayLabel').textContent = label;
+}
+
+// ================== RENDER MAIN ==================
+function renderMain() {
+  const el = document.getElementById('mainContent');
+  if (currentTab === 0 || currentTab === 1) renderTaskList(el);
+  else if (currentTab === 2) renderStats(el);
+  else renderSettings(el);
+  updateNavLabels();
+}
+
+function renderTaskList(el) {
+  const dateStr = fmtDate(selectedDate);
+  let list = currentTab === 0
+    ? tasks.filter(t => t.date === dateStr)
+    : [...tasks].sort((a,b) => (a.date+a.time).localeCompare(b.date+b.time));
+
+  const pending = list.filter(t => !t.done);
+  const done = list.filter(t => t.done);
+
+  let html = '';
+  if (list.length === 0) {
+    html = `<div class="empty"><div class="empty-icon">📋</div><div class="empty-text">${t('empty')}</div></div>`;
+  } else {
+    if (pending.length) {
+      html += `<div class="section-header"><span class="section-title">${t('pending')}</span><span class="section-count">${pending.length}</span></div>`;
+      pending.forEach(task => { html += taskCard(task); });
+    }
+    if (done.length) {
+      html += `<div class="section-header" style="margin-top:20px"><span class="section-title">${t('done')}</span><span class="section-count">${done.length}</span></div>`;
+      done.forEach(task => { html += taskCard(task); });
+    }
+  }
+  el.innerHTML = html;
+}
+
+function taskCard(task) {
+  const cls = task.done ? 'done' : task.priority === 'urgent' ? 'urgent' : task.priority === 'medium' ? 'medium' : '';
+  const badgeCls = task.done ? 'done' : task.priority;
+  const badgeText = task.done ? t('done') : task.priority === 'urgent' ? (lang==='en'?'urgent':lang==='uz'?'shoshilinch':'срочно') : task.priority === 'medium' ? (lang==='en'?'medium':lang==='uz'?"o'rta":'средний') : '';
+  return `<div class="task-card ${cls}" onclick="editTask('${task.id}')">
+    <div class="task-check" onclick="event.stopPropagation();toggleDone('${task.id}')">${task.done?'✓':''}</div>
+    <div class="task-body">
+      <div class="task-name">${task.name}</div>
+      <div class="task-meta">
+        ${task.time ? `<span class="task-time">🕐 ${task.time}</span>` : ''}
+        ${task.note ? `<span class="task-time">📝 ${task.note.substring(0,30)}...</span>` : ''}
+        ${badgeText ? `<span class="task-badge ${badgeCls}">${badgeText}</span>` : ''}
+      </div>
+    </div>
+    <button class="task-mic" onclick="event.stopPropagation();voiceForTask('${task.id}')" title="Голос">🎙</button>
+  </div>`;
+}
+
+function renderStats(el) {
+  const total = tasks.length;
+  const done = tasks.filter(t=>t.done).length;
+  const urgent = tasks.filter(t=>t.priority==='urgent'&&!t.done).length;
+  const pending = total - done;
+  el.innerHTML = `
+    <div class="section-header"><span class="section-title">${t('stats')}</span></div>
+    <div class="stats-bar">
+      <div class="stat-item"><div class="stat-num">${total}</div><div class="stat-label">${t('total')}</div></div>
+      <div class="stat-item"><div class="stat-num" style="color:var(--green)">${done}</div><div class="stat-label">${t('completed')}</div></div>
+      <div class="stat-item"><div class="stat-num" style="color:var(--yellow)">${pending}</div><div class="stat-label">${t('pending')}</div></div>
+      <div class="stat-item"><div class="stat-num" style="color:var(--red)">${urgent}</div><div class="stat-label">${t('urgent_c')}</div></div>
+    </div>
+    <div class="section-header" style="margin-top:20px"><span class="section-title">Ближайшие</span></div>
+    ${tasks.filter(t=>!t.done).slice(0,5).map(taskCard).join('') || `<div class="empty"><div class="empty-text">${t('empty')}</div></div>`}
+  `;
+}
+
+function renderSettings(el) {
+  el.innerHTML = `
+    <div class="section-header"><span class="section-title">${t('settings')}</span></div>
+    <div style="background:var(--bg2);border-radius:var(--radius);overflow:hidden;margin-bottom:12px">
+      ${settingRow('🌐', lang==='ru'?'Язык':'Language', lang.toUpperCase(), "openLangPicker()")}
+      ${settingRow('📤', lang==='ru'?'Экспорт JSON':'Export JSON', '', "exportJSON()")}
+      ${settingRow('📋', lang==='ru'?'Экспорт CSV':'Export CSV', '', "exportCSV()")}
+      ${settingRow('🗑', lang==='ru'?'Очистить выполненные':'Clear done', '', "clearDone()")}
+    </div>
+    <div style="text-align:center;padding:20px;font-size:12px;color:var(--text3)">PESKOV Smart Planner v1.0<br>PWA · Web Speech API</div>
+  `;
+}
+
+function settingRow(icon, label, value, action) {
+  return `<div onclick="${action}" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border);cursor:pointer">
+    <span style="font-size:20px">${icon}</span>
+    <span style="flex:1;font-size:14px">${label}</span>
+    <span style="font-size:13px;color:var(--text3)">${value}</span>
+    <span style="color:var(--text3)">›</span>
+  </div>`;
+}
+
+// ================== TASK CRUD ==================
+function saveTasks() { localStorage.setItem('peskov_tasks', JSON.stringify(tasks)); }
+
+function toggleDone(id) {
+  const t = tasks.find(t=>t.id===id);
+  if (t) { t.done = !t.done; saveTasks(); renderMain(); renderDates(); showToast(t.done ? '✅ '+this.t('completed_t') : '↩ Отменено'); }
+}
+
+// fix: bind t
+window.toggleDone = function(id) {
+  const task = tasks.find(x=>x.id===id);
+  if (task) { task.done = !task.done; saveTasks(); renderMain(); renderDates(); showToast(task.done ? '✅ Выполнено!' : '↩'); }
+};
+
+function openAddModal() {
+  editId = null;
+  document.getElementById('addModalTitle').innerHTML = t('add') + '<button class="modal-close" onclick="closeModal(\'addModal\')">✕</button>';
+  document.getElementById('taskName').value = '';
+  document.getElementById('taskNote').value = '';
+  document.getElementById('taskDate').value = fmtDate(selectedDate);
+  document.getElementById('taskTime').value = '';
+  selectPriority('low');
+  document.getElementById('addModal').classList.add('open');
+  setTimeout(()=>document.getElementById('taskName').focus(), 200);
+}
+
+function editTask(id) {
+  const task = tasks.find(t=>t.id===id);
+  if (!task) return;
+  editId = id;
+  document.getElementById('addModalTitle').innerHTML = (lang==='en'?'Edit Task':lang==='uz'?"Tahrirlash":'Редактировать') + '<button class="modal-close" onclick="closeModal(\'addModal\')">✕</button>';
+  document.getElementById('taskName').value = task.name;
+  document.getElementById('taskNote').value = task.note || '';
+  document.getElementById('taskDate').value = task.date || fmtDate(selectedDate);
+  document.getElementById('taskTime').value = task.time || '';
+  selectPriority(task.priority || 'low');
+  document.getElementById('addModal').classList.add('open');
+}
+
+function saveTask() {
+  const name = document.getElementById('taskName').value.trim();
+  if (!name) return;
+  if (editId) {
+    const task = tasks.find(t=>t.id===editId);
+    if (task) {
+      task.name = name;
+      task.note = document.getElementById('taskNote').value.trim();
+      task.date = document.getElementById('taskDate').value || fmtDate(selectedDate);
+      task.time = document.getElementById('taskTime').value;
+      task.priority = currentPriority;
+    }
+  } else {
+    tasks.push({
+      id: Date.now().toString(),
+      name,
+      note: document.getElementById('taskNote').value.trim(),
+      date: document.getElementById('taskDate').value || fmtDate(selectedDate),
+      time: document.getElementById('taskTime').value,
+      priority: currentPriority,
+      done: false,
+      created: new Date().toISOString()
+    });
+  }
+  saveTasks();
+  closeModal('addModal');
+  renderMain();
+  renderDates();
+  showToast('✅ ' + t('saved'));
+}
+
+function selectPriority(p) {
+  currentPriority = p;
+  ['low','medium','urgent'].forEach(x => {
+    const btn = document.getElementById('p_'+x);
+    btn.className = 'priority-btn' + (x===p ? ' sel-'+x : '');
+  });
+}
+
+function deleteTask(id) {
+  tasks = tasks.filter(t=>t.id!==id);
+  saveTasks(); renderMain(); renderDates(); showToast('🗑 ' + t('deleted'));
+}
+
+// ================== VOICE ==================
+function openVoice() {
+  document.getElementById('voiceTitle').textContent = t('speaking');
+  document.getElementById('voiceHint').textContent = t('voiceHint');
+  document.getElementById('voiceResult').textContent = '...';
+  document.getElementById('voiceModal').classList.add('open');
+  startRecognition(null);
+}
+
+function voiceForTask(taskId) {
+  document.getElementById('voiceModal').classList.add('open');
+  startRecognition(taskId);
+}
+
+function stopVoice() {
+  if (recognition) recognition.stop();
+  closeModal('voiceModal');
+}
+
+function startRecognition(taskId) {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    document.getElementById('voiceResult').textContent = lang==='ru'?'Голосовой ввод не поддерживается в этом браузере. Используйте Chrome на Android/Desktop.':'Voice input not supported. Use Chrome.';
+    return;
+  }
+  recognition = new SpeechRecognition();
+  recognition.lang = lang==='en'?'en-US':lang==='uz'?'uz-UZ':'ru-RU';
+  recognition.interimResults = true;
+  recognition.continuous = false;
+  recognition.onresult = e => {
+    let interim = '', final = '';
+    for (let r of e.results) {
+      if (r.isFinal) final += r[0].transcript;
+      else interim += r[0].transcript;
+    }
+    document.getElementById('voiceResult').textContent = final || interim || '...';
+    if (final) processVoice(final, taskId);
+  };
+  recognition.onerror = e => {
+    document.getElementById('voiceResult').textContent = e.error === 'not-allowed' ? t('noMic') : t('noSpeech');
+  };
+  recognition.onend = () => { document.getElementById('fabMic').classList.remove('listening'); };
+  recognition.start();
+  document.getElementById('fabMic').classList.add('listening');
+}
+
+function processVoice(text, taskId) {
+  // NLP разбор
+  const lc = text.toLowerCase();
+  // Извлекаем время
+  let time = '';
+  const timeMatch = lc.match(/(\d{1,2})[:\s](\d{2})|(\d{1,2})\s*(час|утра|дня|вечера|am|pm)/);
+  if (timeMatch) {
+    let h = parseInt(timeMatch[1] || timeMatch[3]);
+    const m = parseInt(timeMatch[2] || 0);
+    if (lc.includes('вечер') || lc.includes('дня') || (lc.includes('pm') && h < 12)) h += 12;
+    time = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+  }
+  // Извлекаем дату
+  let date = fmtDate(selectedDate);
+  if (lc.includes('завтра') || lc.includes('tomorrow') || lc.includes('ertaga')) {
+    const tom = new Date(); tom.setDate(tom.getDate()+1); date = fmtDate(tom);
+  } else if (lc.includes('послезавтра') || lc.includes('day after')) {
+    const dat = new Date(); dat.setDate(dat.getDate()+2); date = fmtDate(dat);
+  }
+  // Определяем приоритет
+  let priority = 'low';
+  if (lc.includes('срочно') || lc.includes('urgent') || lc.includes('важно')) priority = 'urgent';
+  else if (lc.includes('средн') || lc.includes('medium')) priority = 'medium';
+
+  // Если задача указана — обновляем
+  if (taskId) {
+    const task = tasks.find(t=>t.id===taskId);
+    if (task) {
+      if (lc.includes('выполн') || lc.includes('готов') || lc.includes('done')) task.done = true;
+      if (time) task.time = time;
+      saveTasks(); renderMain(); closeModal('voiceModal'); showToast('✅ Обновлено'); return;
+    }
+  }
+
+  // Создаём новую задачу — очищаем текст от служебных слов
+  let name = text.replace(/завтра|послезавтра|сегодня|tomorrow|ertaga|срочно|urgent|важно|в \d{1,2}:\d{2}|в \d{1,2} час[а-я]*/gi,'').trim();
+  if (!name) name = text;
+
+  tasks.push({ id: Date.now().toString(), name: name.charAt(0).toUpperCase()+name.slice(1), note:'', date, time, priority, done:false, created:new Date().toISOString() });
+  saveTasks(); renderMain(); renderDates();
+  closeModal('voiceModal');
+  showToast('✅ ' + t('saved'));
+}
+
+// ================== UI HELPERS ==================
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'), 2500);
+}
+
+function setTab(n) {
+  currentTab = n;
+  [0,1,2,3].forEach(i => document.getElementById('nav'+i).classList.toggle('active', i===n));
+  renderMain();
+}
+
+function updateNavLabels() {
+  document.getElementById('navLabel0').textContent = t('home');
+  document.getElementById('navLabel1').textContent = t('all');
+  document.getElementById('navLabel2').textContent = t('stats');
+  document.getElementById('navLabel3').textContent = t('settings');
+}
+
+function setLang(l) {
+  lang = l; localStorage.setItem('peskov_lang', l);
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.textContent===l.toUpperCase()));
+  renderDates(); renderMain();
+}
+
+function clearDone() {
+  tasks = tasks.filter(t=>!t.done); saveTasks(); renderMain(); showToast('🗑 Очищено');
+}
+
+function exportJSON() {
+  const blob = new Blob([JSON.stringify(tasks,null,2)],{type:'application/json'});
+  const a = document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='peskov_tasks.json'; a.click(); showToast('📤 '+t('exportDone'));
+}
+
+function exportCSV() {
+  const rows = [['ID','Name','Date','Time','Priority','Done','Note'],...tasks.map(t=>[t.id,t.name,t.date,t.time,t.priority,t.done,t.note])];
+  const csv = rows.map(r=>r.map(c=>'"'+String(c||'').replace(/"/g,'""')+'"').join(',')).join('\n');
+  const blob = new Blob([csv],{type:'text/csv'}); const a = document.createElement('a');
+  a.href=URL.createObjectURL(blob); a.download='peskov_tasks.csv'; a.click(); showToast('📋 '+t('exportDone'));
+}
+
+function openLangPicker() {
+  const langs = [{code:'ru',name:'Русский'},{code:'en',name:'English'},{code:'uz',name:"O'zbek"}];
+  showToast(langs.map(l=>l.code.toUpperCase()+': '+l.name).join(' | '));
+}
+
+// ================== INIT ==================
+function init() {
+  // Demo tasks if empty
+  if (tasks.length === 0) {
+    const today = fmtDate(new Date());
+    const tom = new Date(); tom.setDate(tom.getDate()+1);
+    tasks = [
+      {id:'1',name:'Брифинг для прессы',note:'Основные тезисы',date:today,time:'10:00',priority:'urgent',done:false,created:new Date().toISOString()},
+      {id:'2',name:'Встреча с советниками',note:'',date:today,time:'14:00',priority:'low',done:false,created:new Date().toISOString()},
+      {id:'3',name:'Отчёт по заседанию',note:'',date:today,time:'09:00',priority:'low',done:true,created:new Date().toISOString()},
+      {id:'4',name:'Пресс-конференция',note:'',date:fmtDate(tom),time:'12:00',priority:'medium',done:false,created:new Date().toISOString()},
+    ];
+    saveTasks();
+  }
+  renderDates();
+  renderMain();
+
+  // Swipe to close modals
+  document.querySelectorAll('.modal-overlay').forEach(m => {
+    m.addEventListener('click', e => { if(e.target===m) m.classList.remove('open'); });
+  });
+
+  // Register SW
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  }
+
+  // URL params
+  if (location.search.includes('action=new')) openAddModal();
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

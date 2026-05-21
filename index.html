@@ -13,9 +13,8 @@
 <style>
 :root{--bg:#0f172a;--bg2:#1e293b;--bg3:#0d1117;--acc:#3d4fd4;--acc2:#5c6bc0;--txt:#f1f5f9;--txt2:#94a3b8;--txt3:#64748b;--brd:#1e2d45;--red:#ef4444;--grn:#10b981;--ylw:#f59e0b;--ora:#ff6b35;--r:12px}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:15px;min-height:100vh;overflow-x:hidden}
+body{background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:15px;min-height:100vh}
 
-/* HEADER */
 .hdr{background:var(--bg3);padding:10px 14px 0;position:sticky;top:0;z-index:100;border-bottom:1px solid var(--brd)}
 .hdr-top{display:flex;align-items:center;gap:8px;margin-bottom:8px}
 .logo{width:34px;height:34px;border-radius:8px;overflow:hidden;flex-shrink:0}
@@ -26,31 +25,26 @@ body{background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSys
 .lb{padding:3px 10px;border-radius:20px;border:1px solid var(--brd);background:var(--bg2);color:var(--txt2);font-size:11px;cursor:pointer}
 .lb.on{background:var(--acc);border-color:var(--acc);color:#fff}
 
-/* DATE STRIP */
 .dstrip{display:flex;gap:4px;overflow-x:auto;padding-bottom:8px;scrollbar-width:none}
 .dstrip::-webkit-scrollbar{display:none}
 .dpill{min-width:38px;text-align:center;padding:5px 3px;border-radius:9px;cursor:pointer;flex-shrink:0}
 .dpill.on{background:var(--acc)}
-.dpill:not(.on):active{background:var(--bg2)}
 .dn{font-size:9px;color:var(--txt3);margin-bottom:1px}
 .dpill.on .dn{color:rgba(255,255,255,.65)}
 .dd{font-size:12px;font-weight:600}
 .ddot{width:4px;height:4px;border-radius:50%;margin:2px auto 0;background:var(--acc2)}
 .dpill.on .ddot{background:#fff}
 
-/* MAIN */
 main{padding:10px 14px 88px}
 .sec-hdr{display:flex;align-items:center;justify-content:space-between;margin:14px 0 8px}
 .sec-t{font-size:11px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.7px}
 .sec-c{font-size:11px;color:var(--txt3)}
 
-/* TASK CARD */
-.tc{background:var(--bg2);border-radius:var(--r);padding:11px 12px;margin-bottom:7px;border-left:3px solid var(--acc);display:flex;align-items:flex-start;gap:9px;transition:transform .1s;position:relative}
-.tc:active{transform:scale(.98)}
+.tc{background:var(--bg2);border-radius:var(--r);padding:11px 12px;margin-bottom:7px;border-left:3px solid var(--acc);display:flex;align-items:flex-start;gap:9px}
 .tc.done{border-left-color:var(--grn);opacity:.6}
 .tc.urg{border-left-color:var(--red)}
 .tc.med{border-left-color:var(--ylw)}
-.tcheck{width:22px;height:22px;border-radius:50%;border:2px solid var(--txt3);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:12px;cursor:pointer;transition:all .15s}
+.tcheck{width:22px;height:22px;border-radius:50%;border:2px solid var(--txt3);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:12px;cursor:pointer}
 .tc.done .tcheck{background:var(--grn);border-color:var(--grn)}
 .tbody{flex:1;min-width:0;cursor:pointer}
 .tname{font-size:13px;font-weight:500;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -60,54 +54,46 @@ main{padding:10px 14px 88px}
 .tbadge{font-size:9px;padding:1px 6px;border-radius:4px;background:rgba(61,79,212,.2);color:var(--acc2)}
 .tbadge.urg{background:rgba(239,68,68,.15);color:#f87171}
 .tbadge.med{background:rgba(245,158,11,.15);color:#fbbf24}
-.tbadge.done{background:rgba(16,185,129,.15);color:#34d399}
+.tbadge.done-b{background:rgba(16,185,129,.15);color:#34d399}
 .tactions{display:flex;flex-direction:column;gap:4px;flex-shrink:0}
 .tact{background:none;border:none;font-size:15px;padding:3px;cursor:pointer;border-radius:5px;color:var(--txt3)}
-.tact:hover{color:var(--txt)}
 
-/* EMPTY */
 .empty{text-align:center;padding:36px 20px}
 .empty-ico{font-size:36px;margin-bottom:10px}
 .empty-t{font-size:13px;color:var(--txt3)}
 
-/* CALENDAR */
 .cal{background:var(--bg2);border-radius:var(--r);padding:12px;margin-bottom:10px}
 .cal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .cal-title{font-size:14px;font-weight:700}
-.cal-nav{background:none;border:none;color:var(--txt2);font-size:22px;padding:4px 8px;cursor:pointer;border-radius:7px}
-.cal-nav:active{background:var(--bg3)}
+.cal-nav{background:none;border:none;color:var(--txt2);font-size:24px;padding:2px 8px;cursor:pointer;border-radius:7px}
 .cal-days{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:4px}
-.cal-dname{text-align:center;font-size:10px;color:var(--txt3);padding:4px 0}
+.cal-dn{text-align:center;font-size:10px;color:var(--txt3);padding:4px 0}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
-.cal-day{text-align:center;padding:6px 2px;border-radius:7px;cursor:pointer;position:relative;min-height:34px;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.cal-day:active{background:var(--bg3)}
+.cal-day{text-align:center;padding:5px 2px;border-radius:7px;cursor:pointer;min-height:32px;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .cal-day.today{background:rgba(61,79,212,.15)}
-.cal-day.today .cal-dnum{color:var(--acc)}
-.cal-day.selected{background:var(--acc)}
-.cal-day.selected .cal-dnum{color:#fff}
-.cal-day.other{opacity:.3}
+.cal-day.today .cal-dnum{color:var(--acc);font-weight:700}
+.cal-day.sel{background:var(--acc)}
+.cal-day.sel .cal-dnum,.cal-day.sel .cal-dot{color:#fff}
+.cal-day.other{opacity:.25;pointer-events:none}
 .cal-dnum{font-size:12px;font-weight:500}
 .cal-dots{display:flex;gap:2px;justify-content:center;margin-top:2px}
 .cal-dot{width:4px;height:4px;border-radius:50%}
-.cal-dot.low{background:var(--acc2)}
-.cal-dot.med{background:var(--ylw)}
-.cal-dot.urg{background:var(--red)}
-.cal-day.selected .cal-dot{background:#fff}
+.d-low{background:var(--acc2)}
+.d-med{background:var(--ylw)}
+.d-urg{background:var(--red)}
+.cal-day.sel .cal-dot{background:#fff !important}
 
-/* FAB */
-.fab-mic{position:fixed;bottom:78px;right:76px;width:44px;height:44px;background:var(--bg2);border:1px solid var(--brd);border-radius:50%;color:var(--txt2);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:200;transition:all .15s}
+.fab-mic{position:fixed;bottom:78px;right:76px;width:44px;height:44px;background:var(--bg2);border:1px solid var(--brd);border-radius:50%;color:var(--txt2);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:200}
 .fab-mic.on{background:#dc2626;border-color:#dc2626;color:#fff;animation:mpulse 1s infinite}
 .fab{position:fixed;bottom:78px;right:16px;width:52px;height:52px;background:var(--acc);border:none;border-radius:50%;color:#fff;font-size:26px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(61,79,212,.5);z-index:200}
 .fab:active{transform:scale(.92)}
 @keyframes mpulse{0%,100%{box-shadow:0 0 0 0 rgba(220,38,38,.4)}50%{box-shadow:0 0 0 10px rgba(220,38,38,0)}}
 
-/* BOTTOM NAV */
 .bnav{position:fixed;bottom:0;left:0;right:0;background:var(--bg3);border-top:1px solid var(--brd);display:flex;padding:5px 0 env(safe-area-inset-bottom);z-index:300}
-.bni{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 0;cursor:pointer;color:var(--txt3);font-size:10px;border:none;background:none;transition:color .1s}
+.bni{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 0;cursor:pointer;color:var(--txt3);font-size:10px;border:none;background:none}
 .bni.on{color:var(--acc)}
 .bni-ico{font-size:20px}
 
-/* MODAL BASE */
 .ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:500;align-items:flex-end}
 .ov.open{display:flex}
 .mdl{background:var(--bg2);border-radius:20px 20px 0 0;padding:18px 16px 36px;width:100%;max-height:92vh;overflow-y:auto}
@@ -118,57 +104,49 @@ main{padding:10px 14px 88px}
 .fi{width:100%;background:var(--bg3);border:1px solid var(--brd);border-radius:9px;padding:9px 12px;color:var(--txt);font-size:13px;outline:none}
 .fi:focus{border-color:var(--acc)}
 .frow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.frow3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
 .prw{display:flex;gap:6px}
 .pb{flex:1;padding:7px 4px;border-radius:8px;border:1px solid var(--brd);background:var(--bg3);color:var(--txt2);font-size:11px;cursor:pointer;text-align:center}
 .pb.sl{border-color:var(--grn);background:rgba(16,185,129,.12);color:#34d399}
 .pb.sm{border-color:var(--ylw);background:rgba(245,158,11,.12);color:#fbbf24}
 .pb.su{border-color:var(--red);background:rgba(239,68,68,.12);color:#f87171}
 .btn-p{width:100%;padding:12px;background:var(--acc);border:none;border-radius:11px;color:#fff;font-size:14px;font-weight:600;cursor:pointer;margin-top:6px}
-.btn-p:active{opacity:.85}
-.btn-d{width:100%;padding:12px;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);border-radius:11px;color:#f87171;font-size:14px;font-weight:600;cursor:pointer;margin-top:6px}
+.btn-d{width:100%;padding:11px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.25);border-radius:11px;color:#f87171;font-size:13px;font-weight:600;cursor:pointer;margin-top:8px}
 
-/* VOICE MODAL */
-.vmdl{background:var(--bg2);border-radius:20px 20px 0 0;padding:22px 16px 36px;width:100%;text-align:center}
-.vanim{width:72px;height:72px;background:var(--acc);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 14px;transition:all .3s}
-.vanim.active{background:#dc2626;animation:mpulse 1s infinite}
-.vtitle{font-size:15px;font-weight:700;margin-bottom:6px}
-.vhint{font-size:12px;color:var(--txt3);margin-bottom:14px;line-height:1.5}
-.vres{background:var(--bg3);border-radius:9px;padding:10px 12px;font-size:12px;color:var(--txt2);min-height:44px;margin-bottom:14px;text-align:left;line-height:1.5}
-.vstatus{font-size:11px;color:var(--acc);margin-bottom:10px;min-height:16px}
-.btn-stop{width:100%;padding:12px;background:#dc2626;border:none;border-radius:11px;color:#fff;font-size:14px;font-weight:600;cursor:pointer}
+.vmdl{background:var(--bg2);border-radius:20px 20px 0 0;padding:20px 16px 34px;width:100%;text-align:center}
+.vanim{width:68px;height:68px;background:var(--acc);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 12px}
+.vanim.on{background:#dc2626;animation:mpulse 1s infinite}
+.vtitle{font-size:14px;font-weight:700;margin-bottom:5px}
+.vhint{font-size:11px;color:var(--txt3);margin-bottom:10px;line-height:1.6;text-align:left}
+.vres{background:var(--bg3);border-radius:9px;padding:10px 12px;font-size:12px;color:var(--txt2);min-height:40px;margin-bottom:8px;text-align:left;line-height:1.5}
+.vstatus{font-size:11px;color:var(--grn);margin-bottom:10px;min-height:18px;line-height:1.5;text-align:left;padding:0 2px}
+.vstatus.err{color:var(--red)}
+.btn-stop{width:100%;padding:11px;background:#dc2626;border:none;border-radius:11px;color:#fff;font-size:14px;font-weight:600;cursor:pointer}
 
-/* ALERT MODAL */
-.alert-ov{display:none;position:fixed;inset:0;background:rgba(20,0,0,.88);z-index:800;align-items:center;justify-content:center;padding:20px}
+.alert-ov{display:none;position:fixed;inset:0;background:rgba(15,0,0,.9);z-index:900;align-items:center;justify-content:center;padding:20px}
 .alert-ov.open{display:flex}
-.alert-box{background:var(--bg2);border-radius:18px;padding:24px 20px;width:100%;max-width:340px;text-align:center;border:2px solid var(--ora);animation:alertGlow 2s ease-in-out infinite}
-@keyframes alertGlow{
-  0%,100%{box-shadow:0 0 0 3px rgba(255,107,53,.3),0 0 20px rgba(255,107,53,.4),0 0 40px rgba(220,38,38,.2)}
-  50%{box-shadow:0 0 0 6px rgba(255,107,53,.5),0 0 40px rgba(255,107,53,.6),0 0 80px rgba(220,38,38,.4)}
+.alert-box{background:var(--bg2);border-radius:18px;padding:24px 20px;width:100%;max-width:340px;text-align:center;border:2px solid var(--ora);animation:aGlow 2s ease-in-out infinite}
+@keyframes aGlow{
+  0%,100%{box-shadow:0 0 0 3px rgba(255,107,53,.3),0 0 24px rgba(255,107,53,.45),0 0 48px rgba(220,38,38,.2)}
+  50%{box-shadow:0 0 0 7px rgba(255,107,53,.5),0 0 48px rgba(255,107,53,.7),0 0 96px rgba(220,38,38,.45)}
 }
-.alert-ico{font-size:44px;margin-bottom:10px}
-.alert-title{font-size:15px;font-weight:700;color:var(--ora);margin-bottom:6px}
-.alert-sub{font-size:13px;color:var(--txt2);margin-bottom:14px;line-height:1.5}
-.alert-time{font-size:20px;font-weight:700;color:var(--txt);margin-bottom:18px}
-.btn-alert{width:100%;padding:12px;background:var(--ora);border:none;border-radius:11px;color:#fff;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px}
-.btn-alert-done{width:100%;padding:12px;background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);border-radius:11px;color:#34d399;font-size:14px;font-weight:600;cursor:pointer}
+.alert-ico{font-size:48px;margin-bottom:8px}
+.alert-title{font-size:16px;font-weight:700;color:var(--ora);margin-bottom:5px}
+.alert-name{font-size:14px;color:var(--txt);margin-bottom:4px;font-weight:600}
+.alert-time{font-size:22px;font-weight:700;color:var(--txt);margin-bottom:18px}
+.btn-alert{width:100%;padding:12px;background:var(--ora);border:none;border-radius:11px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:8px}
+.btn-alert-done{width:100%;padding:11px;background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);border-radius:11px;color:#34d399;font-size:13px;font-weight:600;cursor:pointer}
 
-/* SETTINGS */
-.srow{display:flex;align-items:center;gap:11px;padding:13px 14px;border-bottom:1px solid var(--brd);cursor:pointer}
-.srow:last-child{border-bottom:none}
-.srow-ico{font-size:20px}
-.srow-lbl{flex:1;font-size:13px}
-.srow-val{font-size:12px;color:var(--txt3)}
-
-/* TOAST */
-.toast{position:fixed;top:64px;left:50%;transform:translateX(-50%);background:var(--bg2);border:1px solid var(--brd);color:var(--txt);font-size:12px;padding:8px 16px;border-radius:18px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
-.toast.show{opacity:1}
-
-/* STATS */
 .stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px}
 .stat-card{background:var(--bg2);border-radius:var(--r);padding:12px;text-align:center}
 .stat-n{font-size:24px;font-weight:700;color:var(--acc)}
 .stat-l{font-size:10px;color:var(--txt3);margin-top:3px}
+.srow{display:flex;align-items:center;gap:11px;padding:13px 14px;border-bottom:1px solid var(--brd);cursor:pointer}
+.srow:last-child{border-bottom:none}
+.srow-ico{font-size:20px}
+.srow-lbl{flex:1;font-size:13px}
+
+.toast{position:fixed;top:64px;left:50%;transform:translateX(-50%);background:var(--bg2);border:1px solid var(--brd);color:var(--txt);font-size:12px;padding:8px 16px;border-radius:18px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1}
 </style>
 </head>
 <body>
@@ -202,22 +180,22 @@ main{padding:10px 14px 88px}
 <div class="ov" id="addOv">
   <div class="mdl">
     <div class="mdl-t" id="addTitle">Новая задача<button class="mclose" onclick="closeOv('addOv')">✕</button></div>
-    <div class="fg"><label class="fl" id="lname">Название</label><input class="fi" id="iName" placeholder="Что нужно сделать?"></div>
-    <div class="fg"><label class="fl" id="lnote">Заметка</label><input class="fi" id="iNote" placeholder="Дополнительно..."></div>
-    <div class="fg"><label class="fl" id="ldate">Дата</label><input class="fi" id="iDate" type="date"></div>
+    <div class="fg"><label class="fl">Название</label><input class="fi" id="iName" placeholder="Что нужно сделать?"></div>
+    <div class="fg"><label class="fl">Заметка</label><input class="fi" id="iNote" placeholder="Дополнительно..."></div>
+    <div class="fg"><label class="fl">Дата</label><input class="fi" id="iDate" type="date"></div>
     <div class="frow fg">
-      <div><label class="fl" id="ltstart">Начало</label><input class="fi" id="iTimeS" type="time"></div>
-      <div><label class="fl" id="ltend">Конец</label><input class="fi" id="iTimeE" type="time"></div>
+      <div><label class="fl">Начало</label><input class="fi" id="iTimeS" type="time"></div>
+      <div><label class="fl">Конец</label><input class="fi" id="iTimeE" type="time"></div>
     </div>
     <div class="fg">
-      <label class="fl" id="lprio">Приоритет</label>
+      <label class="fl">Приоритет</label>
       <div class="prw">
         <button class="pb" id="pl" onclick="selP('low')">✅ Обычный</button>
         <button class="pb" id="pm" onclick="selP('medium')">⚠️ Средний</button>
         <button class="pb" id="pu" onclick="selP('urgent')">🔴 Срочный</button>
       </div>
     </div>
-    <button class="btn-p" onclick="saveTask()" id="saveBtn">Сохранить</button>
+    <button class="btn-p" onclick="saveTask()">Сохранить</button>
     <button class="btn-d" id="delBtn" onclick="deleteEditing()" style="display:none">🗑 Удалить задачу</button>
   </div>
 </div>
@@ -226,11 +204,17 @@ main{padding:10px 14px 88px}
 <div class="ov" id="voiceOv">
   <div class="vmdl">
     <div class="vanim" id="vanim">🎙</div>
-    <div class="vtitle" id="vtitle">Говорите...</div>
-    <div class="vhint" id="vhint">Примеры команд:<br>«25 мая встреча с 10 до 11, средний»<br>«Перенеси встречу на 27 мая в 15:00»<br>«Удали брифинг»</div>
-    <div class="vstatus" id="vstatus"></div>
+    <div class="vtitle" id="vtitle">Нажмите и говорите</div>
+    <div class="vhint">
+      Примеры:<br>
+      «25 мая подготовить договор с 10 до 11, средний»<br>
+      «Завтра встреча с советниками в 14 часов, срочный»<br>
+      «Перенеси встречу на 27 мая в 15:00»<br>
+      «Удали брифинг» · «Выполни отчёт»
+    </div>
     <div class="vres" id="vres">Ожидаю...</div>
-    <button class="btn-stop" onclick="stopVoice()">■ Остановить</button>
+    <div class="vstatus" id="vstatus"></div>
+    <button class="btn-stop" id="voiceBtn" onclick="toggleVoice()">🎙 Начать запись</button>
   </div>
 </div>
 
@@ -239,7 +223,7 @@ main{padding:10px 14px 88px}
   <div class="alert-box">
     <div class="alert-ico">⚠️</div>
     <div class="alert-title">Срочная задача через 1 час!</div>
-    <div class="alert-sub" id="alertName"></div>
+    <div class="alert-name" id="alertName"></div>
     <div class="alert-time" id="alertTime"></div>
     <button class="btn-alert" onclick="closeAlert()">Понял, закрыть</button>
     <button class="btn-alert-done" onclick="markAlertDone()">✅ Уже выполнено</button>
@@ -249,7 +233,7 @@ main{padding:10px 14px 88px}
 <div class="toast" id="toast"></div>
 
 <script>
-// ========== STATE ==========
+// ===== STATE =====
 let tasks = JSON.parse(localStorage.getItem('pp_tasks') || '[]');
 let selDate = new Date();
 let tab = 0;
@@ -257,110 +241,166 @@ let lang = localStorage.getItem('pp_lang') || 'ru';
 let prio = 'low';
 let editId = null;
 let rec = null;
+let recOn = false;
 let calYear = new Date().getFullYear();
 let calMonth = new Date().getMonth();
+let alertQueue = [];
 let alertTaskId = null;
 let notified = new Set(JSON.parse(localStorage.getItem('pp_notified') || '[]'));
 
-// ========== TRANSLATIONS ==========
+// ===== TRANSLATIONS =====
 const TR = {
-  ru:{home:'Главная',cal:'Календарь',all:'Все задачи',sets:'Настройки',add:'Новая задача',edit:'Редактировать',save:'Сохранить',name:'Название',note:'Заметка',date:'Дата',tstart:'Начало',tend:'Конец',prio:'Приоритет',plow:'✅ Обычный',pmed:'⚠️ Средний',purg:'🔴 Срочный',done:'Выполнено',pend:'В работе',total:'Всего',urgent:'Срочных',empty:'Нет задач на этот день',speak:'Говорите...',hint:'«25 мая встреча с 10 до 11, средний»\n«Перенеси встречу на 27 мая в 15:00»\n«Удали брифинг»',stop:'■ Остановить',saved:'✅ Задача сохранена!',deleted:'🗑 Удалено',cmpdone:'✅ Выполнено!',notfound:'❌ Задача не найдена',rescheduled:'📅 Задача перенесена',created:'✅ Задача создана',expjson:'📤 Экспорт JSON',expcsv:'📋 Экспорт CSV',cleardone:'Очистить выполненные',exportj:'Экспорт JSON',exportc:'Экспорт CSV',langset:'Язык',low:'обычный',med:'средний',urg:'срочный'},
-  en:{home:'Home',cal:'Calendar',all:'All tasks',sets:'Settings',add:'New Task',edit:'Edit',save:'Save',name:'Title',note:'Note',date:'Date',tstart:'Start',tend:'End',prio:'Priority',plow:'✅ Normal',pmed:'⚠️ Medium',purg:'🔴 Urgent',done:'Done',pend:'Pending',total:'Total',urgent:'Urgent',empty:'No tasks for this day',speak:'Speak...',hint:'"Meeting May 25 from 10 to 11, medium"\n"Reschedule meeting to May 27 at 3pm"\n"Delete briefing"',stop:'■ Stop',saved:'✅ Saved!',deleted:'🗑 Deleted',cmpdone:'✅ Done!',notfound:'❌ Task not found',rescheduled:'📅 Rescheduled',created:'✅ Task created',expjson:'📤 Export JSON',expcsv:'📋 Export CSV',cleardone:'Clear done',exportj:'Export JSON',exportc:'Export CSV',langset:'Language',low:'normal',med:'medium',urg:'urgent'},
-  uz:{home:'Asosiy',cal:'Taqvim',all:'Barcha',sets:'Sozlamalar',add:'Yangi vazifa',edit:'Tahrirlash',save:'Saqlash',name:'Nomi',note:'Izoh',date:'Sana',tstart:'Boshlanish',tend:'Tugash',prio:'Muhimlik',plow:"✅ Oddiy",pmed:"⚠️ O'rta",purg:"🔴 Shoshilinch",done:'Bajarilgan',pend:'Jarayonda',total:'Jami',urgent:'Shoshilinch',empty:"Bu kun uchun vazifalar yo'q",speak:'Gapiring...',hint:"'25 may uchrashuv soat 10 dan 11 gacha, o'rta'",stop:"■ To'xtatish",saved:"✅ Saqlandi!",deleted:"🗑 O'chirildi",cmpdone:"✅ Bajarildi!",notfound:"❌ Vazifa topilmadi",rescheduled:"📅 Ko'chirildi",created:"✅ Vazifa yaratildi",expjson:"📤 JSON eksport",expcsv:"📋 CSV eksport",cleardone:"Bajarilganlarni tozalash",exportj:"JSON eksport",exportc:"CSV eksport",langset:"Til",low:'oddiy',med:"o'rta",urg:'shoshilinch'}
+  ru:{home:'Главная',cal:'Календарь',all:'Все задачи',sets:'Настройки',done:'Выполнено',pend:'В работе',total:'Всего',urgent:'Срочных',empty:'Нет задач на этот день'},
+  en:{home:'Home',cal:'Calendar',all:'All tasks',sets:'Settings',done:'Done',pend:'Pending',total:'Total',urgent:'Urgent',empty:'No tasks for this day'},
+  uz:{home:'Asosiy',cal:'Taqvim',all:'Barcha',sets:'Sozlamalar',done:'Bajarilgan',pend:'Jarayonda',total:'Jami',urgent:'Shoshilinch',empty:"Bu kun uchun vazifalar yo'q"}
 };
 function t(k){return(TR[lang]&&TR[lang][k])||TR.ru[k]||k}
 
-// ========== UTILS ==========
+// ===== UTILS =====
 function fmt(d){return d.toISOString().split('T')[0]}
 function today(){return fmt(new Date())}
-function fmtDisp(dateStr){
-  const d=new Date(dateStr+'T12:00:00');
-  return d.toLocaleDateString(lang==='en'?'en-GB':lang==='uz'?'uz-UZ':'ru-RU',{day:'numeric',month:'long'});
+function fmtDisp(ds){
+  try{const d=new Date(ds+'T12:00:00');return d.toLocaleDateString(lang==='en'?'en-GB':'ru-RU',{day:'numeric',month:'long'})}catch(e){return ds}
 }
 function save(){localStorage.setItem('pp_tasks',JSON.stringify(tasks))}
+function setSelDate(d){selDate=d;calMonth=d.getMonth();calYear=d.getFullYear()}
 
-// ========== DATE PARSER ==========
+// ===== NORMALIZE: слова → цифры =====
+function normalize(text){
+  let s = text.toLowerCase();
+  
+  // Порядковые числительные (для дат)
+  const ords = [
+    ['двадцать первого',21],['двадцать второго',22],['двадцать третьего',23],
+    ['двадцать четвёртого',24],['двадцать четвертого',24],['двадцать пятого',25],
+    ['двадцать шестого',26],['двадцать седьмого',27],['двадцать восьмого',28],
+    ['двадцать девятого',29],['тридцатого',30],['тридцать первого',31],
+    ['двадцатого',20],['девятнадцатого',19],['восемнадцатого',18],['семнадцатого',17],
+    ['шестнадцатого',16],['пятнадцатого',15],['четырнадцатого',14],['тринадцатого',13],
+    ['двенадцатого',12],['одиннадцатого',11],['десятого',10],['девятого',9],
+    ['восьмого',8],['седьмого',7],['шестого',6],['пятого',5],
+    ['четвёртого',4],['четвертого',4],['третьего',3],['второго',2],['первого',1]
+  ];
+  for(const[w,n]of ords) s=s.replace(new RegExp(w,'g'),String(n));
+  
+  // Количественные (для времени)
+  const cards = [
+    ['двадцати одного',21],['двадцати двух',22],['двадцати трёх',23],['двадцати',20],['двадцать',20],
+    ['девятнадцати',19],['девятнадцать',19],['восемнадцати',18],['восемнадцать',18],
+    ['семнадцати',17],['семнадцать',17],['шестнадцати',16],['шестнадцать',16],
+    ['пятнадцати',15],['пятнадцать',15],['четырнадцати',14],['четырнадцать',14],
+    ['тринадцати',13],['тринадцать',13],['двенадцати',12],['двенадцать',12],
+    ['одиннадцати',11],['одиннадцать',11],['десяти',10],['десять',10],
+    ['девяти',9],['девять',9],['восьми',8],['восемь',8],
+    ['семи',7],['семь',7],['шести',6],['шесть',6],
+    ['пяти',5],['пять',5],['четырёх',4],['четырех',4],['четыре',4],
+    ['трёх',3],['трех',3],['три',3],['двух',2],['два',2],['двум',2],
+    ['одного',1],['одной',1],['одну',1],['один',1],['нуля',0],['ноль',0],['нулю',0]
+  ];
+  for(const[w,n]of cards) s=s.replace(new RegExp('\\b'+w+'\\b','g'),String(n));
+  
+  return s;
+}
+
+// ===== DATE PARSER =====
 const MONTHS={
-  'января':0,'февраля':1,'марта':2,'апреля':3,'мая':4,'июня':5,'июля':6,'августа':7,'сентября':8,'октября':9,'ноября':10,'декабря':11,
-  'январе':0,'феврале':1,'марте':2,'апреле':3,'июне':5,'июле':6,'августе':7,'сентябре':8,'октябре':9,'ноябре':10,'декабре':11,
-  'январь':0,'февраль':1,'март':2,'апрель':3,'май':4,'июнь':5,'июль':6,'август':7,'сентябрь':8,'октябрь':9,'ноябрь':10,'декабрь':11,
-  'january':0,'february':1,'march':2,'april':3,'may':4,'june':5,'july':6,'august':7,'september':8,'october':9,'november':10,'december':11
+  'января':0,'февраля':1,'марта':2,'апреля':3,'мая':4,'июня':5,'июля':6,
+  'августа':7,'сентября':8,'октября':9,'ноября':10,'декабря':11,
+  'январе':0,'феврале':1,'марте':2,'апреле':3,'июне':5,'июле':6,
+  'августе':7,'сентябре':8,'октябре':9,'ноябре':10,'декабре':11,
+  'январь':0,'февраль':1,'март':2,'апрель':3,'май':4,'июнь':5,'июль':6,
+  'август':7,'сентябрь':8,'октябрь':9,'ноябрь':10,'декабрь':11,
+  'january':0,'february':1,'march':2,'april':3,'may':4,'june':5,'july':6,
+  'august':7,'september':8,'october':9,'november':10,'december':11
 };
-function parseDate(lc){
+
+function parseDate(s){
+  // s уже нормализован (числа словами заменены на цифры)
   for(const[mn,mi]of Object.entries(MONTHS)){
-    const re=new RegExp('(\\d{1,2})(?:-го|-ого)?\\s+'+mn,'i');
-    const m=lc.match(re);
+    const re=new RegExp('(\\d{1,2})\\s+'+mn,'i');
+    const m=s.match(re);
     if(m){
       const day=parseInt(m[1]),now=new Date();
       let yr=now.getFullYear();
       let d=new Date(yr,mi,day);
-      if(d<new Date(now.getTime()-24*60*60*1000))d.setFullYear(yr+1);
+      if(d<new Date(now-86400000))d.setFullYear(yr+1);
       return fmt(d);
     }
   }
-  if(/послезавтра/.test(lc)){const d=new Date();d.setDate(d.getDate()+2);return fmt(d)}
-  if(/завтра|tomorrow/.test(lc)){const d=new Date();d.setDate(d.getDate()+1);return fmt(d)}
-  if(/сегодня|today/.test(lc))return today();
-  const thru=lc.match(/через\s+(\d+)\s+дн/);
+  if(/послезавтра/.test(s)){const d=new Date();d.setDate(d.getDate()+2);return fmt(d)}
+  if(/завтра|tomorrow/.test(s)){const d=new Date();d.setDate(d.getDate()+1);return fmt(d)}
+  if(/сегодня|today/.test(s))return today();
+  const thru=s.match(/через\s+(\d+)\s+дн/);
   if(thru){const d=new Date();d.setDate(d.getDate()+parseInt(thru[1]));return fmt(d)}
-  const wdays=[['воскресен',0],['понедельник',1],['вторник',2],['среду',3],['среда',3],['четверг',4],['пятниц',5],['субботу',6],['суббота',6]];
-  for(const[nm,dn]of wdays){
-    if(lc.includes(nm)){const d=new Date();const df=(dn-d.getDay()+7)%7||7;d.setDate(d.getDate()+df);return fmt(d)}
+  const wmap=[['воскресен',0],['понедельник',1],['вторник',2],['среду',3],['среда',3],['четверг',4],['пятниц',5],['субботу',6],['суббота',6]];
+  for(const[nm,dn]of wmap){
+    if(s.includes(nm)){const d=new Date();const df=(dn-d.getDay()+7)%7||7;d.setDate(d.getDate()+df);return fmt(d)}
   }
   return fmt(selDate);
 }
 
-function parseTimeRange(lc){
-  // "с 10 до 11" "с 10:30 до 12:00" "в период с 10 до 11 часов" "с 10 по 11"
-  const rr=/(?:с|from)\s+(\d{1,2})(?:[:\.](\d{2}))?\s+(?:до|по|to)\s+(\d{1,2})(?:[:\.](\d{2}))?/;
-  const rm=lc.match(rr);
+// ===== TIME RANGE PARSER =====
+function parseTimeRange(s){
+  // "с 10 до 11", "с 10:30 до 12:00", "с 10 по 11", "с 10.00 до 11.00"
+  const rng=/(?:с|from)\s+(\d{1,2})(?:[:\.](\d{2}))?\s+(?:до|по|to)\s+(\d{1,2})(?:[:\.](\d{2}))?/;
+  const rm=s.match(rng);
   if(rm){
-    return{
-      start:String(rm[1]).padStart(2,'0')+':'+(rm[2]||'00').padStart(2,'0'),
-      end:String(rm[3]).padStart(2,'0')+':'+(rm[4]||'00').padStart(2,'0')
-    }
+    const h1=String(parseInt(rm[1])).padStart(2,'0');
+    const m1=rm[2]?String(parseInt(rm[2])).padStart(2,'0'):'00';
+    const h2=String(parseInt(rm[3])).padStart(2,'0');
+    const m2=rm[4]?String(parseInt(rm[4])).padStart(2,'0'):'00';
+    return{start:h1+':'+m1,end:h2+':'+m2};
   }
-  // "в 14 часов" "в 14:00" "в 14.00"
-  const sr=/(?:^|[\s,])(?:в|at)\s+(\d{1,2})(?:[:\.](\d{2}))?(?:\s*(?:час|:| |$))/;
-  const sm=lc.match(sr);
-  if(sm){return{start:String(sm[1]).padStart(2,'0')+':'+(sm[2]||'00').padStart(2,'0'),end:''}}
-  return{start:'',end:''}
+  // "в 14 часов", "в 14:00", "в 14.00"
+  const sngl=/(?:^|[\s,])(?:в|at)\s+(\d{1,2})(?:[:\.](\d{2}))?(?:\s*(?:час|ч\b))?/;
+  const sm=s.match(sngl);
+  if(sm){
+    const h=String(parseInt(sm[1])).padStart(2,'0');
+    const m=sm[2]?String(parseInt(sm[2])).padStart(2,'0'):'00';
+    return{start:h+':'+m,end:''};
+  }
+  return{start:'',end:''};
 }
 
-function parsePrio(lc){
-  if(/срочн|urgent|высок|важн/i.test(lc))return'urgent';
-  if(/средн|medium/i.test(lc))return'medium';
+// ===== PRIORITY PARSER =====
+function parsePrio(s){
+  if(/срочн|urgent|высок|важн/i.test(s))return'urgent';
+  if(/средн|medium/i.test(s))return'medium';
   return'low';
 }
 
-function cleanTaskName(text){
-  let s=text;
-  // remove month+day
-  for(const mn of Object.keys(MONTHS)){s=s.replace(new RegExp('\\d{1,2}(?:-го)?\\s+'+mn,'gi'),'')}
-  // remove relative dates
+// ===== CLEAN TASK NAME =====
+function cleanName(original,norm){
+  let s=original;
+  // Убираем дату
+  for(const mn of Object.keys(MONTHS)){
+    s=s.replace(new RegExp('\\d{1,2}(?:-го)?\\s+'+mn+'\\w*','gi'),'');
+  }
+  s=s.replace(/(?:двадцать\s+)?(?:первого|второго|третьего|четвёртого|четвертого|пятого|шестого|седьмого|восьмого|девятого|десятого|одиннадцатого|двенадцатого|тринадцатого|четырнадцатого|пятнадцатого|шестнадцатого|семнадцатого|восемнадцатого|девятнадцатого|двадцатого|тридцатого|тридцать первого)/gi,'');
   s=s.replace(/послезавтра|завтра|сегодня|tomorrow|today/gi,'');
   s=s.replace(/через\s+\d+\s+\w+/gi,'');
   s=s.replace(/(?:в\s+)?(?:понедельник|вторник|среду|среда|четверг|пятницу|пятница|субботу|суббота|воскресенье)/gi,'');
-  // remove time range
-  s=s.replace(/в\s+период\s+с\s+\d+[:.]\d*\s+(?:до|по)\s+\d+[:.]\d*\s*час\w*/gi,'');
-  s=s.replace(/с\s+\d{1,2}(?:[:.]\d{2})?\s+(?:до|по)\s+\d{1,2}(?:[:.]\d{2})?\s*(?:час\w*)?/gi,'');
-  s=s.replace(/(?:^|[\s,])(?:в|at)\s+\d{1,2}(?:[:.]\d{2})?\s*(?:час\w*)?/gi,'');
-  // remove priority words
+  // Убираем время
+  s=s.replace(/в\s+период\s+с\s+[\d:\.]+\s+(?:до|по)\s+[\d:\.]+\s*(?:час\w*)?/gi,'');
+  s=s.replace(/с\s+[\d:\.]+\s+(?:до|по)\s+[\d:\.]+\s*(?:час\w*)?/gi,'');
+  s=s.replace(/(?:с\s+)?(?:десяти|одиннадцати|двенадцати|тринадцати|четырнадцати|пятнадцати|шестнадцати|семнадцати|восемнадцати|девятнадцати|двадцати)\s+(?:до|по)\s+\w+/gi,'');
+  s=s.replace(/(?:^|[\s,])(?:в|at)\s+\d{1,2}(?:[:\. ]\d{2})?\s*(?:час\w*|ч\b)?/gi,'');
+  // Убираем приоритет
   s=s.replace(/уровень\s+(?:срочный|средний|обычный|низкий|высокий)/gi,'');
   s=s.replace(/(?:срочный|средний|обычный|низкий|высокий)\s*(?:приоритет)?/gi,'');
-  s=s.replace(/(?:срочно|urgently?|medium|normal)/gi,'');
-  // remove command words
-  s=s.replace(/(?:создай?|поставь|добавь|запиши|поставь)\s+(?:мне\s+)?(?:задачу?|напоминание)?/gi,'');
-  s=s.replace(/по\s+итогам\s+(?:которого\s+)?(?:должны?\s+)?(?:быть\s+)?(?:заполнены?\s+)?(?:все\s+)?(?:графы\s+)?/gi,'');
-  s=s.replace(/,/g,' ');
-  s=s.replace(/\s+/g,' ').trim();
+  s=s.replace(/\bсрочно\b/gi,'');
+  // Убираем команды
+  s=s.replace(/(?:создай?|поставь|добавь|запиши|напомни)\s+(?:мне\s+)?(?:задачу?|напоминание)?/gi,'');
+  s=s.replace(/по\s+итогам\s*(?:которого\s*)?(?:должн\w+\s*)?(?:быть\s*)?(?:заполнен\w+\s*)?(?:все\s*)?(?:графы?\s*)?/gi,'');
+  s=s.replace(/,/g,' ').replace(/\s+/g,' ').trim();
   if(s)s=s.charAt(0).toUpperCase()+s.slice(1);
   return s||'Новая задача';
 }
 
-// ========== NLP ENGINE ==========
+// ===== FIND TASK BY NAME =====
 function findTask(query){
-  const qw=query.toLowerCase().split(/\s+/).filter(w=>w.length>2);
+  const qw=query.toLowerCase().replace(/задачу?/,'').trim().split(/\s+/).filter(w=>w.length>2);
+  if(!qw.length)return null;
   let best=null,bsc=0;
   for(const tk of tasks){
     const tw=tk.name.toLowerCase();
@@ -370,68 +410,131 @@ function findTask(query){
   return bsc>0?best:null;
 }
 
-function processVoice(text){
-  const lc=text.toLowerCase().trim();
+// ===== VOICE PROCESSING =====
+function processVoice(originalText){
+  const norm=normalize(originalText);
+  const lc=norm.trim();
   
-  // DELETE
-  if(/удали(?:ть)?|delete\s+task/i.test(lc)){
-    const qm=lc.match(/удали(?:ть)?\s+(?:задачу\s+)?(.+)/i)||lc.match(/delete\s+(?:task\s+)?(.+)/i);
+  // УДАЛИТЬ
+  if(/удали(?:ть)?/i.test(lc)){
+    const qm=lc.match(/удали(?:ть)?\s+(.+)/i);
     if(qm){
       const tk=findTask(qm[1]);
-      if(tk){const nm=tk.name;tasks=tasks.filter(t=>t.id!==tk.id);save();renderAll();return'🗑 «'+nm+'» удалена'}
+      if(tk){const nm=tk.name;tasks=tasks.filter(t=>t.id!==tk.id);save();renderAll();renderDstrip();return'🗑 «'+nm+'» удалена'}
     }
-    return t('notfound');
+    return'❌ Задача не найдена';
   }
   
-  // COMPLETE
-  if(/выполни(?:ть)?|отметь|сделал|done\s+task/i.test(lc)){
-    const qm=lc.match(/(?:выполни(?:ть)?|отметь|сделал)\s+(?:задачу\s+)?(.+)/i);
+  // ВЫПОЛНИТЬ
+  if(/(?:выполни(?:ть)?|отметь|сделал)\b/i.test(lc)){
+    const qm=lc.match(/(?:выполни(?:ть)?|отметь|сделал)\s+(.+)/i);
     if(qm){
       const tk=findTask(qm[1]);
-      if(tk){tk.done=true;save();renderAll();return'✅ «'+tk.name+'» выполнена'}
+      if(tk){tk.done=true;save();renderAll();renderDstrip();return'✅ «'+tk.name+'» выполнена'}
     }
-    return t('notfound');
+    return'❌ Задача не найдена';
   }
   
-  // RESCHEDULE — "перенеси встречу на 27 мая в 15:00"
-  if(/перенеси(?:ть)?|reschedule/i.test(lc)){
-    const qm=lc.match(/перенеси(?:ть)?\s+(.+?)\s+на\s+(.+)/i)||lc.match(/reschedule\s+(.+?)\s+to\s+(.+)/i);
+  // ПЕРЕНЕСТИ
+  if(/перенеси(?:ть)?\b/i.test(lc)){
+    const qm=lc.match(/перенеси(?:ть)?\s+(.+?)\s+на\s+(.+)/i);
     if(qm){
       const tk=findTask(qm[1]);
       if(tk){
-        const dp=qm[2];
+        const dp=normalize(qm[2]);
         const nd=parseDate(dp);
         const tr=parseTimeRange(dp);
         tk.date=nd;
         if(tr.start)tk.timeStart=tr.start;
         if(tr.end)tk.timeEnd=tr.end;
-        save();renderAll();
-        selDate=new Date(nd+'T12:00:00');
-        renderDstrip();
-        return'📅 «'+tk.name+'» перенесена на '+fmtDisp(nd)+(tr.start?' в '+tr.start:'');
+        save();setSelDate(new Date(nd+'T12:00:00'));renderDstrip();renderAll();
+        return'📅 «'+tk.name+'» перенесена → '+fmtDisp(nd)+(tr.start?' '+tr.start+(tr.end?'–'+tr.end:''):'');
       }
     }
-    return t('notfound');
+    return'❌ Задача не найдена';
   }
   
-  // CREATE NEW TASK
+  // СОЗДАТЬ НОВУЮ
   const date=parseDate(lc);
   const tr=parseTimeRange(lc);
   const pr=parsePrio(lc);
-  const name=cleanTaskName(text);
+  const name=cleanName(originalText,lc);
   const id=Date.now().toString();
-  tasks.push({id,name,note:'',date,timeStart:tr.start,timeEnd:tr.end,priority:pr,done:false,created:new Date().toISOString()});
+  tasks.push({id,name,note:'',date,timeStart:tr.start||'',timeEnd:tr.end||'',priority:pr,done:false,created:new Date().toISOString()});
   save();
-  selDate=new Date(date+'T12:00:00');
-  renderDstrip();
-  renderAll();
-  return t('created')+': «'+name+'» → '+fmtDisp(date)+(tr.start?' '+tr.start+(tr.end?'–'+tr.end:''):'');
+  setSelDate(new Date(date+'T12:00:00'));
+  renderDstrip();renderAll();
+  
+  const prLabel=pr==='urgent'?'🔴 Срочный':pr==='medium'?'⚠️ Средний':'✅ Обычный';
+  return'✅ «'+name+'»\n📅 '+fmtDisp(date)+(tr.start?'\n🕐 '+tr.start+(tr.end?'–'+tr.end:''):'')+'\n'+prLabel;
 }
 
-// ========== CRUD ==========
+// ===== VOICE CONTROL =====
+function openVoice(){
+  document.getElementById('voiceOv').classList.add('open');
+  document.getElementById('vres').textContent='Ожидаю...';
+  document.getElementById('vstatus').textContent='';
+  document.getElementById('vstatus').className='vstatus';
+}
+
+function toggleVoice(){
+  if(recOn){stopRec()}else{startRec()}
+}
+
+function startRec(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){
+    document.getElementById('vres').textContent='Голосовой ввод работает только в Chrome на Android';
+    return;
+  }
+  rec=new SR();
+  rec.lang=lang==='en'?'en-US':lang==='uz'?'uz-UZ':'ru-RU';
+  rec.interimResults=true;
+  rec.continuous=false;
+  rec.maxAlternatives=3;
+  recOn=true;
+  document.getElementById('vanim').classList.add('on');
+  document.getElementById('fabMic').classList.add('on');
+  document.getElementById('voiceBtn').textContent='■ Остановить';
+  document.getElementById('vtitle').textContent='Слушаю...';
+  document.getElementById('vstatus').textContent='';
+  
+  rec.onresult=e=>{
+    let inter='',fin='';
+    for(let r of e.results){if(r.isFinal)fin+=r[0].transcript;else inter+=r[0].transcript}
+    document.getElementById('vres').textContent=fin||inter||'...';
+    if(fin){
+      const result=processVoice(fin);
+      const el=document.getElementById('vstatus');
+      el.textContent=result;
+      el.className='vstatus'+(result.startsWith('❌')?' err':'');
+    }
+  };
+  rec.onerror=e=>{
+    const el=document.getElementById('vstatus');
+    el.textContent='⚠️ Ошибка: '+e.error+(e.error==='not-allowed'?' — разрешите микрофон в браузере':'');
+    el.className='vstatus err';
+    stopRec();
+  };
+  rec.onend=()=>stopRec();
+  try{rec.start()}catch(e){recOn=false}
+}
+
+function stopRec(){
+  recOn=false;
+  if(rec){try{rec.stop()}catch(e){}}
+  document.getElementById('vanim').classList.remove('on');
+  document.getElementById('fabMic').classList.remove('on');
+  document.getElementById('voiceBtn').textContent='🎙 Начать запись';
+  document.getElementById('vtitle').textContent='Нажмите и говорите';
+}
+
+function stopVoice(){stopRec();closeOv('voiceOv')}
+
+// ===== CRUD =====
 function openAdd(){
   editId=null;
-  document.getElementById('addTitle').innerHTML=t('add')+'<button class="mclose" onclick="closeOv(\'addOv\')">✕</button>';
+  document.getElementById('addTitle').innerHTML='Новая задача<button class="mclose" onclick="closeOv(\'addOv\')">✕</button>';
   document.getElementById('iName').value='';
   document.getElementById('iNote').value='';
   document.getElementById('iDate').value=fmt(selDate);
@@ -446,7 +549,7 @@ function openAdd(){
 function openEdit(id){
   const tk=tasks.find(t=>t.id===id);if(!tk)return;
   editId=id;
-  document.getElementById('addTitle').innerHTML=t('edit')+'<button class="mclose" onclick="closeOv(\'addOv\')">✕</button>';
+  document.getElementById('addTitle').innerHTML='Редактировать<button class="mclose" onclick="closeOv(\'addOv\')">✕</button>';
   document.getElementById('iName').value=tk.name;
   document.getElementById('iNote').value=tk.note||'';
   document.getElementById('iDate').value=tk.date||fmt(selDate);
@@ -459,25 +562,34 @@ function openEdit(id){
 
 function saveTask(){
   const name=document.getElementById('iName').value.trim();
-  if(!name)return;
+  if(!name){document.getElementById('iName').focus();return}
   if(editId){
     const tk=tasks.find(t=>t.id===editId);
     if(tk){tk.name=name;tk.note=document.getElementById('iNote').value.trim();tk.date=document.getElementById('iDate').value||fmt(selDate);tk.timeStart=document.getElementById('iTimeS').value;tk.timeEnd=document.getElementById('iTimeE').value;tk.priority=prio}
   }else{
-    tasks.push({id:Date.now().toString(),name,note:document.getElementById('iNote').value.trim(),date:document.getElementById('iDate').value||fmt(selDate),timeStart:document.getElementById('iTimeS').value,timeEnd:document.getElementById('iTimeE').value,priority:prio,done:false,created:new Date().toISOString()});
+    const d=document.getElementById('iDate').value||fmt(selDate);
+    tasks.push({id:Date.now().toString(),name,note:document.getElementById('iNote').value.trim(),date:d,timeStart:document.getElementById('iTimeS').value,timeEnd:document.getElementById('iTimeE').value,priority:prio,done:false,created:new Date().toISOString()});
+    setSelDate(new Date(d+'T12:00:00'));
   }
-  save();closeOv('addOv');renderAll();renderDstrip();showToast(t('saved'));
+  save();closeOv('addOv');renderDstrip();renderAll();showToast('✅ Сохранено');
 }
 
 function deleteEditing(){
   if(!editId)return;
   tasks=tasks.filter(t=>t.id!==editId);
-  save();closeOv('addOv');renderAll();renderDstrip();showToast(t('deleted'));
+  save();closeOv('addOv');renderDstrip();renderAll();showToast('🗑 Удалено');
 }
 
-function toggleDone(id){
+function delTask(id,e){
+  if(e)e.stopPropagation();
+  tasks=tasks.filter(t=>t.id!==id);
+  save();renderDstrip();renderAll();showToast('🗑 Удалено');
+}
+
+function toggleDone(id,e){
+  if(e)e.stopPropagation();
   const tk=tasks.find(t=>t.id===id);
-  if(tk){tk.done=!tk.done;save();renderAll();renderDstrip();showToast(tk.done?t('cmpdone'):'↩')}
+  if(tk){tk.done=!tk.done;save();renderAll();renderDstrip();showToast(tk.done?'✅ Выполнено':'↩')}
 }
 
 function selP(p){
@@ -487,121 +599,92 @@ function selP(p){
   document.getElementById('pu').className='pb'+(p==='urgent'?' su':'');
 }
 
-// ========== RENDER ==========
+// ===== RENDER =====
 function renderAll(){
   if(tab===0)renderHome();
   else if(tab===1)renderCal();
   else if(tab===2)renderAllTasks();
-  else renderSettings();
-  updateNavLabels();
+  else renderSets();
+  updateNav();
 }
 
-function renderHome(){
-  const el=document.getElementById('main');
-  const ds=fmt(selDate);
-  const list=tasks.filter(t=>t.date===ds);
+function taskCard(tk){
+  const cls='tc'+(tk.done?' done':tk.priority==='urgent'?' urg':tk.priority==='medium'?' med':'');
+  const bCls=tk.done?'done-b':tk.priority;
+  const bTxt=tk.done?'выполнено':tk.priority==='urgent'?'срочный':tk.priority==='medium'?'средний':'';
+  const tRange=tk.timeStart?(tk.timeEnd?tk.timeStart+'–'+tk.timeEnd:tk.timeStart):'';
+  return`<div class="${cls}">
+  <div class="tcheck" onclick="toggleDone('${tk.id}',event)">${tk.done?'✓':''}</div>
+  <div class="tbody" onclick="openEdit('${tk.id}')">
+    <div class="tname">${tk.name}</div>
+    <div class="tmeta">
+      ${tRange?`<span class="ttime">🕐 ${tRange}</span>`:''}
+      ${tk.note?`<span class="ttime">📝 ${tk.note.substring(0,24)}...</span>`:''}
+      ${bTxt?`<span class="tbadge ${bCls}">${bTxt}</span>`:''}
+    </div>
+  </div>
+  <div class="tactions">
+    <button class="tact" onclick="openEdit('${tk.id}')" title="Изменить">✏️</button>
+    <button class="tact" onclick="delTask('${tk.id}',event)" title="Удалить">🗑</button>
+  </div>
+</div>`;
+}
+
+function renderList(list){
   const pend=list.filter(t=>!t.done);
   const done=list.filter(t=>t.done);
-  let html='';
-  if(list.length===0){html=`<div class="empty"><div class="empty-ico">📋</div><div class="empty-t">${t('empty')}</div></div>`}
-  else{
-    if(pend.length)html+=`<div class="sec-hdr"><span class="sec-t">${t('pend')}</span><span class="sec-c">${pend.length}</span></div>`+pend.map(taskCard).join('');
-    if(done.length)html+=`<div class="sec-hdr" style="margin-top:16px"><span class="sec-t">${t('done')}</span><span class="sec-c">${done.length}</span></div>`+done.map(taskCard).join('');
-  }
-  el.innerHTML=html;
+  if(!list.length)return`<div class="empty"><div class="empty-ico">📋</div><div class="empty-t">${t('empty')}</div></div>`;
+  let h='';
+  if(pend.length)h+=`<div class="sec-hdr"><span class="sec-t">${t('pend')}</span><span class="sec-c">${pend.length}</span></div>`+pend.map(taskCard).join('');
+  if(done.length)h+=`<div class="sec-hdr" style="margin-top:14px"><span class="sec-t">${t('done')}</span><span class="sec-c">${done.length}</span></div>`+done.map(taskCard).join('');
+  return h;
 }
 
-function renderAllTasks(){
-  const el=document.getElementById('main');
-  const sorted=[...tasks].sort((a,b)=>(a.date+a.timeStart).localeCompare(b.date+b.timeStart));
-  const pend=sorted.filter(t=>!t.done);
-  const done=sorted.filter(t=>t.done);
-  let html='';
-  if(tasks.length===0){html=`<div class="empty"><div class="empty-ico">📋</div><div class="empty-t">${t('empty')}</div></div>`}
-  else{
-    if(pend.length)html+=`<div class="sec-hdr"><span class="sec-t">${t('pend')}</span><span class="sec-c">${pend.length}</span></div>`+pend.map(taskCard).join('');
-    if(done.length)html+=`<div class="sec-hdr" style="margin-top:16px"><span class="sec-t">${t('done')}</span><span class="sec-c">${done.length}</span></div>`+done.map(taskCard).join('');
-  }
-  el.innerHTML=html;
-}
+function renderHome(){document.getElementById('main').innerHTML=renderList(tasks.filter(t=>t.date===fmt(selDate)))}
+function renderAllTasks(){document.getElementById('main').innerHTML=renderList([...tasks].sort((a,b)=>(a.date+a.timeStart).localeCompare(b.date+b.timeStart)))}
 
 function renderCal(){
   const el=document.getElementById('main');
-  const mnNames={ru:['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'],en:['January','February','March','April','May','June','July','August','September','October','November','December'],uz:['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentabr','Oktyabr','Noyabr','Dekabr']};
-  const dnNames={ru:['Пн','Вт','Ср','Чт','Пт','Сб','Вс'],en:['Mo','Tu','We','Th','Fr','Sa','Su'],uz:['Du','Se','Ch','Pa','Ju','Sh','Ya']};
-  const mn=(mnNames[lang]||mnNames.ru)[calMonth];
-  const dn=dnNames[lang]||dnNames.ru;
-  
-  // Build calendar grid
+  const MN={ru:['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'],en:['January','February','March','April','May','June','July','August','September','October','November','December'],uz:['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentabr','Oktyabr','Noyabr','Dekabr']};
+  const DN={ru:['Пн','Вт','Ср','Чт','Пт','Сб','Вс'],en:['Mo','Tu','We','Th','Fr','Sa','Su'],uz:['Du','Se','Ch','Pa','Ju','Sh','Ya']};
+  const mn=(MN[lang]||MN.ru)[calMonth];
   const first=new Date(calYear,calMonth,1);
   const last=new Date(calYear,calMonth+1,0);
-  let startDow=first.getDay(); // 0=Sun
-  startDow=(startDow+6)%7; // make Mon=0
-  
+  let startDow=(first.getDay()+6)%7;
+  const todStr=today(),selStr=fmt(selDate);
   let days='';
-  // prev month padding
   const prevLast=new Date(calYear,calMonth,0).getDate();
-  for(let i=startDow-1;i>=0;i--){
-    days+=`<div class="cal-day other"><div class="cal-dnum">${prevLast-i}</div></div>`;
-  }
-  // current month
-  const todStr=today();
-  const selStr=fmt(selDate);
+  for(let i=startDow-1;i>=0;i--)days+=`<div class="cal-day other"><div class="cal-dnum">${prevLast-i}</div></div>`;
   for(let d=1;d<=last.getDate();d++){
-    const ds=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const dayTasks=tasks.filter(t=>t.date===ds);
-    const isT=ds===todStr;
-    const isSel=ds===selStr;
-    let cls='cal-day'+(isT?' today':'')+(isSel?' selected':'');
+    const ds=calYear+'-'+String(calMonth+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    const dt=tasks.filter(t=>t.date===ds&&!t.done);
+    const isT=ds===todStr,isSel=ds===selStr;
+    let cls='cal-day'+(isT?' today':'')+(isSel?' sel':'');
     let dots='';
-    if(dayTasks.length>0&&!isSel){
-      // show up to 3 dots by priority
-      const hasUrg=dayTasks.some(t=>t.priority==='urgent'&&!t.done);
-      const hasMed=dayTasks.some(t=>t.priority==='medium'&&!t.done);
-      const hasLow=dayTasks.some(t=>!t.done&&t.priority==='low');
-      if(hasUrg)dots+=`<div class="cal-dot urg"></div>`;
-      if(hasMed)dots+=`<div class="cal-dot med"></div>`;
-      if(hasLow||(!hasUrg&&!hasMed&&dayTasks.length>0))dots+=`<div class="cal-dot low"></div>`;
-    }else if(dayTasks.length>0&&isSel){
-      dots=`<div class="cal-dot"></div>`;
-    }
-    days+=`<div class="${cls}" onclick="calSelect('${ds}')"><div class="cal-dnum">${d}</div><div class="cal-dots">${dots}</div></div>`;
+    if(dt.length&&!isSel){
+      const hasU=dt.some(t=>t.priority==='urgent'),hasM=dt.some(t=>t.priority==='medium'),hasL=dt.some(t=>t.priority==='low');
+      if(hasU)dots+=`<div class="cal-dot d-urg"></div>`;
+      if(hasM)dots+=`<div class="cal-dot d-med"></div>`;
+      if(hasL||(!hasU&&!hasM))dots+=`<div class="cal-dot d-low"></div>`;
+    }else if(tasks.some(t=>t.date===ds)&&isSel)dots=`<div class="cal-dot"></div>`;
+    days+=`<div class="${cls}" onclick="calSel('${ds}')"><div class="cal-dnum">${d}</div><div class="cal-dots">${dots}</div></div>`;
   }
-  // next month padding
-  const total=startDow+last.getDate();
-  const pad=(7-total%7)%7;
-  for(let i=1;i<=pad;i++){
-    days+=`<div class="cal-day other"><div class="cal-dnum">${i}</div></div>`;
-  }
-  
-  const selTasks=tasks.filter(t=>t.date===selStr);
-  const selPend=selTasks.filter(t=>!t.done);
-  const selDone=selTasks.filter(t=>t.done);
-  let thtml='';
-  if(selTasks.length===0)thtml=`<div class="empty"><div class="empty-ico">📋</div><div class="empty-t">${t('empty')}</div></div>`;
-  else{
-    if(selPend.length)thtml+=`<div class="sec-hdr"><span class="sec-t">${t('pend')}</span><span class="sec-c">${selPend.length}</span></div>`+selPend.map(taskCard).join('');
-    if(selDone.length)thtml+=`<div class="sec-hdr" style="margin-top:16px"><span class="sec-t">${t('done')}</span></div>`+selDone.map(taskCard).join('');
-  }
-  
-  el.innerHTML=`
-    <div class="cal">
-      <div class="cal-hdr">
-        <button class="cal-nav" onclick="calPrev()">‹</button>
-        <div class="cal-title">${mn} ${calYear}</div>
-        <button class="cal-nav" onclick="calNext()">›</button>
-      </div>
-      <div class="cal-days">${dn.map(d=>`<div class="cal-dname">${d}</div>`).join('')}</div>
-      <div class="cal-grid">${days}</div>
+  const pad=(7-(startDow+last.getDate())%7)%7;
+  for(let i=1;i<=pad;i++)days+=`<div class="cal-day other"><div class="cal-dnum">${i}</div></div>`;
+  el.innerHTML=`<div class="cal">
+    <div class="cal-hdr">
+      <button class="cal-nav" onclick="calPrev()">‹</button>
+      <div class="cal-title">${mn} ${calYear}</div>
+      <button class="cal-nav" onclick="calNext()">›</button>
     </div>
-    ${thtml}
-  `;
+    <div class="cal-days">${(DN[lang]||DN.ru).map(d=>`<div class="cal-dn">${d}</div>`).join('')}</div>
+    <div class="cal-grid">${days}</div>
+  </div>${renderList(tasks.filter(t=>t.date===selStr))}`;
 }
 
-function renderSettings(){
-  const el=document.getElementById('main');
+function renderSets(){
   const tot=tasks.length,dn=tasks.filter(t=>t.done).length,urg=tasks.filter(t=>t.priority==='urgent'&&!t.done).length;
-  el.innerHTML=`
+  document.getElementById('main').innerHTML=`
     <div class="stats-grid">
       <div class="stat-card"><div class="stat-n">${tot}</div><div class="stat-l">${t('total')}</div></div>
       <div class="stat-card"><div class="stat-n" style="color:var(--grn)">${dn}</div><div class="stat-l">${t('done')}</div></div>
@@ -609,48 +692,18 @@ function renderSettings(){
       <div class="stat-card"><div class="stat-n" style="color:var(--red)">${urg}</div><div class="stat-l">${t('urgent')}</div></div>
     </div>
     <div style="background:var(--bg2);border-radius:var(--r);overflow:hidden">
-      <div class="srow" onclick="exportJSON()"><span class="srow-ico">📤</span><span class="srow-lbl">${t('exportj')}</span><span>›</span></div>
-      <div class="srow" onclick="exportCSV()"><span class="srow-ico">📋</span><span class="srow-lbl">${t('exportc')}</span><span>›</span></div>
-      <div class="srow" onclick="clearDone()"><span class="srow-ico">🗑</span><span class="srow-lbl">${t('cleardone')}</span><span>›</span></div>
-    </div>
-  `;
+      <div class="srow" onclick="exportJSON()"><span class="srow-ico">📤</span><span class="srow-lbl">Экспорт JSON</span><span>›</span></div>
+      <div class="srow" onclick="exportCSV()"><span class="srow-ico">📋</span><span class="srow-lbl">Экспорт CSV</span><span>›</span></div>
+      <div class="srow" onclick="clearDone()"><span class="srow-ico">🗑</span><span class="srow-lbl">Очистить выполненные</span><span>›</span></div>
+    </div>`;
 }
 
-function taskCard(tk){
-  const cls='tc'+(tk.done?' done':tk.priority==='urgent'?' urg':tk.priority==='medium'?' med':'');
-  const bCls=tk.done?'done':tk.priority;
-  const bTxt=tk.done?t('done'):tk.priority==='urgent'?t('urg'):tk.priority==='medium'?t('med'):'';
-  const tRange=tk.timeStart?(tk.timeEnd?tk.timeStart+'–'+tk.timeEnd:tk.timeStart):'';
-  return`<div class="${cls}">
-    <div class="tcheck" onclick="toggleDone('${tk.id}')">${tk.done?'✓':''}</div>
-    <div class="tbody" onclick="openEdit('${tk.id}')">
-      <div class="tname">${tk.name}</div>
-      <div class="tmeta">
-        ${tRange?`<span class="ttime">🕐 ${tRange}</span>`:''}
-        ${tk.note?`<span class="ttime">📝 ${tk.note.substring(0,25)}...</span>`:''}
-        ${bTxt?`<span class="tbadge ${bCls}">${bTxt}</span>`:''}
-      </div>
-    </div>
-    <div class="tactions">
-      <button class="tact" onclick="openEdit('${tk.id}')" title="Ред">✏️</button>
-      <button class="tact" onclick="event.stopPropagation();delTask('${tk.id}')" title="Удал">🗑</button>
-    </div>
-  </div>`;
-}
-
-function delTask(id){
-  if(!confirm('Удалить задачу?'))return;
-  tasks=tasks.filter(t=>t.id!==id);
-  save();renderAll();renderDstrip();showToast(t('deleted'));
-}
-
-// ========== DATE STRIP ==========
 function renderDstrip(){
   const strip=document.getElementById('dstrip');
   strip.innerHTML='';
   const now=new Date();
-  const dn={ru:['Пн','Вт','Ср','Чт','Пт','Сб','Вс'],en:['Mo','Tu','We','Th','Fr','Sa','Su'],uz:['Du','Se','Ch','Pa','Ju','Sh','Ya']};
-  const names=dn[lang]||dn.ru;
+  const DN={ru:['Пн','Вт','Ср','Чт','Пт','Сб','Вс'],en:['Mo','Tu','We','Th','Fr','Sa','Su'],uz:['Du','Se','Ch','Pa','Ju','Sh','Ya']};
+  const names=DN[lang]||DN.ru;
   for(let i=-3;i<=21;i++){
     const d=new Date(now);d.setDate(now.getDate()+i);
     const ds=fmt(d);
@@ -660,62 +713,36 @@ function renderDstrip(){
     const p=document.createElement('div');
     p.className='dpill'+(sel?' on':'');
     p.innerHTML=`<div class="dn">${names[dow]}</div><div class="dd">${d.getDate()}</div>${has?'<div class="ddot"></div>':'<div style="height:6px"></div>'}`;
-    p.onclick=()=>{selDate=d;renderDstrip();renderAll()};
+    p.onclick=()=>{setSelDate(d);renderDstrip();renderAll()};
     strip.appendChild(p);
   }
   const active=strip.querySelector('.on');
-  if(active)active.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});
-  
+  if(active)setTimeout(()=>active.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'}),50);
   const isT=fmt(selDate)===today();
   const isTom=fmt(selDate)===fmt(new Date(new Date().setDate(new Date().getDate()+1)));
-  document.getElementById('dayLabel').textContent=isT?(lang==='en'?'Today':lang==='uz'?'Bugun':'Сегодня'):isTom?(lang==='en'?'Tomorrow':lang==='uz'?'Ertaga':'Завтра'):fmtDisp(fmt(selDate));
+  document.getElementById('dayLabel').textContent=isT?'Сегодня':isTom?'Завтра':fmtDisp(fmt(selDate));
 }
 
-// ========== CALENDAR NAV ==========
-function calPrev(){calMonth--;if(calMonth<0){calMonth=11;calYear--}renderCal()}
-function calNext(){calMonth++;if(calMonth>11){calMonth=0;calYear++}renderCal()}
-function calSelect(ds){
-  selDate=new Date(ds+'T12:00:00');
-  calMonth=selDate.getMonth();calYear=selDate.getFullYear();
-  renderDstrip();renderCal();
+// ===== CALENDAR NAV =====
+function calPrev(){if(--calMonth<0){calMonth=11;calYear--}renderCal()}
+function calNext(){if(++calMonth>11){calMonth=0;calYear++}renderCal()}
+function calSel(ds){setSelDate(new Date(ds+'T12:00:00'));renderDstrip();renderCal()}
+
+// ===== TABS =====
+function setTab(n){
+  tab=n;
+  [0,1,2,3].forEach(i=>document.getElementById('n'+i).classList.toggle('on',i===n));
+  document.getElementById('stripWrap').style.display=n===1?'none':'block';
+  renderAll();
+}
+function updateNav(){
+  document.getElementById('nl0').textContent=t('home');
+  document.getElementById('nl1').textContent=t('cal');
+  document.getElementById('nl2').textContent=t('all');
+  document.getElementById('nl3').textContent=t('sets');
 }
 
-// ========== VOICE ==========
-function openVoice(){
-  document.getElementById('vtitle').textContent=t('speak');
-  document.getElementById('vhint').innerHTML=t('hint').replace(/\n/g,'<br>');
-  document.getElementById('vres').textContent='...';
-  document.getElementById('vstatus').textContent='';
-  document.getElementById('voiceOv').classList.add('open');
-  startRec();
-}
-
-function startRec(){
-  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SR){document.getElementById('vres').textContent='Голосовой ввод работает только в Chrome';return}
-  rec=new SR();
-  rec.lang=lang==='en'?'en-US':lang==='uz'?'uz-UZ':'ru-RU';
-  rec.interimResults=true;rec.continuous=false;rec.maxAlternatives=3;
-  document.getElementById('vanim').classList.add('active');
-  document.getElementById('fabMic').classList.add('on');
-  rec.onresult=e=>{
-    let inter='',fin='';
-    for(let r of e.results){if(r.isFinal)fin+=r[0].transcript;else inter+=r[0].transcript}
-    document.getElementById('vres').textContent=fin||inter||'...';
-    if(fin){
-      const result=processVoice(fin);
-      document.getElementById('vstatus').textContent=result;
-    }
-  };
-  rec.onerror=e=>{document.getElementById('vstatus').textContent='⚠️ '+e.error};
-  rec.onend=()=>{document.getElementById('vanim').classList.remove('active');document.getElementById('fabMic').classList.remove('on')};
-  try{rec.start()}catch(e){}
-}
-
-function stopVoice(){if(rec)try{rec.stop()}catch(e){}closeOv('voiceOv')}
-
-// ========== ALERT ==========
-let alertQueue=[];
+// ===== ALERTS — 1 час до срочной =====
 function checkAlerts(){
   const now=new Date();
   const todStr=today();
@@ -724,93 +751,83 @@ function checkAlerts(){
     if(notified.has(tk.id))continue;
     const[h,m]=tk.timeStart.split(':').map(Number);
     const tt=new Date(now);tt.setHours(h,m,0,0);
-    const diff=tt-now;
-    if(diff>=54*60*1000&&diff<=66*60*1000){
+    const diffMin=(tt-now)/60000;
+    // Алерт: задача начнётся через 50-70 минут (центр — 60 минут)
+    // При старте приложения: также если задача уже стартует в следующие 70 минут
+    if(diffMin>=0&&diffMin<=70){
       notified.add(tk.id);
       localStorage.setItem('pp_notified',JSON.stringify([...notified]));
       alertQueue.push(tk);
     }
   }
-  if(alertQueue.length>0&&document.getElementById('alertOv').style.display===''){
-    showNextAlert();
-  }
+  if(alertQueue.length&&!document.getElementById('alertOv').classList.contains('open'))showNextAlert();
 }
+
 function showNextAlert(){
-  if(alertQueue.length===0)return;
+  if(!alertQueue.length)return;
   const tk=alertQueue[0];
   alertTaskId=tk.id;
   document.getElementById('alertName').textContent='«'+tk.name+'»';
-  document.getElementById('alertTime').textContent=tk.timeStart+(tk.timeEnd?'–'+tk.timeEnd:'');
+  const tr=tk.timeStart+(tk.timeEnd?'–'+tk.timeEnd:'');
+  document.getElementById('alertTime').textContent=tr;
   document.getElementById('alertOv').classList.add('open');
-  // vibrate
-  if(navigator.vibrate)navigator.vibrate([200,100,200]);
+  if(navigator.vibrate)navigator.vibrate([300,150,300,150,300]);
 }
-function closeAlert(){document.getElementById('alertOv').classList.remove('open');alertQueue.shift();setTimeout(showNextAlert,300)}
+function closeAlert(){document.getElementById('alertOv').classList.remove('open');alertQueue.shift();setTimeout(showNextAlert,400)}
 function markAlertDone(){
   const tk=tasks.find(t=>t.id===alertTaskId);
-  if(tk)tk.done=true;
-  save();renderAll();renderDstrip();closeAlert();
+  if(tk){tk.done=true;save();renderAll();renderDstrip()}
+  closeAlert();
 }
 
-// ========== TABS ==========
-function setTab(n){
-  tab=n;
-  [0,1,2,3].forEach(i=>document.getElementById('n'+i).classList.toggle('on',i===n));
-  document.getElementById('stripWrap').style.display=n===1?'none':'block';
-  renderAll();
-}
-
-function updateNavLabels(){
-  document.getElementById('nl0').textContent=t('home');
-  document.getElementById('nl1').textContent=t('cal');
-  document.getElementById('nl2').textContent=t('all');
-  document.getElementById('nl3').textContent=t('sets');
-}
-
-// ========== LANG ==========
+// ===== LANG =====
 function setLang(l){
   lang=l;localStorage.setItem('pp_lang',l);
   document.querySelectorAll('.lb').forEach(b=>b.classList.toggle('on',b.textContent===l.toUpperCase()));
   renderDstrip();renderAll();
 }
 
-// ========== HELPERS ==========
-function closeOv(id){document.getElementById(id).classList.remove('open')}
+// ===== HELPERS =====
+function closeOv(id){
+  document.getElementById(id).classList.remove('open');
+  if(id==='voiceOv')stopRec();
+}
 function showToast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2500)}
-function exportJSON(){const b=new Blob([JSON.stringify(tasks,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='peskov_tasks.json';a.click();showToast(t('expjson'))}
-function exportCSV(){const r=[['Name','Date','Start','End','Priority','Done','Note'],...tasks.map(t=>[t.name,t.date,t.timeStart,t.timeEnd,t.priority,t.done,t.note])];const c=r.map(r=>r.map(c=>'"'+String(c||'').replace(/"/g,'""')+'"').join(',')).join('\n');const b=new Blob([c],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='peskov_tasks.csv';a.click();showToast(t('expcsv'))}
+function exportJSON(){const b=new Blob([JSON.stringify(tasks,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='peskov_tasks.json';a.click()}
+function exportCSV(){const r=[['Name','Date','Start','End','Priority','Done','Note'],...tasks.map(t=>[t.name,t.date,t.timeStart,t.timeEnd,t.priority,t.done,t.note])];const c=r.map(r=>r.map(c=>'"'+String(c||'').replace(/"/g,'""')+'"').join(',')).join('\n');const b=new Blob([c],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='peskov_tasks.csv';a.click()}
 function clearDone(){tasks=tasks.filter(t=>!t.done);save();renderAll();renderDstrip();showToast('🗑 Готово')}
 
-// ========== INIT ==========
+// ===== INIT =====
 function init(){
-  if(tasks.length===0){
-    const td=today();
-    const tom=fmt(new Date(new Date().setDate(new Date().getDate()+1)));
+  // Демо задачи
+  if(!tasks.length){
+    const td=today(),tm=fmt(new Date(new Date().setDate(new Date().getDate()+1)));
     tasks=[
-      {id:'1',name:'Брифинг для прессы',note:'Основные тезисы',date:td,timeStart:'10:00',timeEnd:'11:00',priority:'urgent',done:false,created:new Date().toISOString()},
+      {id:'1',name:'Брифинг для прессы',note:'Тезисы готовы',date:td,timeStart:'10:00',timeEnd:'11:00',priority:'urgent',done:false,created:new Date().toISOString()},
       {id:'2',name:'Встреча с советниками',note:'',date:td,timeStart:'14:00',timeEnd:'15:30',priority:'low',done:false,created:new Date().toISOString()},
       {id:'3',name:'Отчёт по заседанию',note:'',date:td,timeStart:'09:00',timeEnd:'',priority:'low',done:true,created:new Date().toISOString()},
-      {id:'4',name:'Пресс-конференция',note:'',date:tom,timeStart:'12:00',timeEnd:'13:30',priority:'medium',done:false,created:new Date().toISOString()},
+      {id:'4',name:'Пресс-конференция',note:'',date:tm,timeStart:'12:00',timeEnd:'13:30',priority:'medium',done:false,created:new Date().toISOString()},
     ];
     save();
   }
-  // migrate old tasks (timeStart/timeEnd from old time field)
+  // Миграция старого формата
   tasks=tasks.map(tk=>{
     if(!tk.timeStart&&tk.time){tk.timeStart=tk.time;delete tk.time}
-    if(!tk.timeEnd)tk.timeEnd='';
+    if(tk.timeEnd===undefined)tk.timeEnd='';
     return tk;
   });save();
   
-  document.querySelectorAll('.ov').forEach(ov=>{ov.addEventListener('click',e=>{if(e.target===ov)ov.classList.remove('open')})});
-  document.getElementById('iDate').addEventListener('keydown',e=>{if(e.key==='Enter')saveTask()});
-  document.getElementById('iName').addEventListener('keydown',e=>{if(e.key==='Enter')saveTask()});
+  document.querySelectorAll('.ov').forEach(ov=>{
+    ov.addEventListener('click',e=>{if(e.target===ov)closeOv(ov.id)});
+  });
   
   renderDstrip();renderAll();
-  setInterval(checkAlerts,60000);
-  checkAlerts();
   
-  if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
-  if(location.search.includes('action=new'))openAdd();
+  // Проверяем алерты при старте и каждые 30 секунд
+  checkAlerts();
+  setInterval(checkAlerts,30000);
+  
+  if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 }
 
 document.addEventListener('DOMContentLoaded',init);

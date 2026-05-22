@@ -12,6 +12,8 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>
 :root{--bg:#0f172a;--bg2:#1e293b;--bg3:#0d1117;--acc:#3d4fd4;--acc2:#5c6bc0;--txt:#f1f5f9;--txt2:#94a3b8;--txt3:#64748b;--brd:#1e2d45;--red:#ef4444;--grn:#10b981;--ylw:#f59e0b;--ora:#ff6b35;--r:12px}
+[data-theme="light"]{--bg:#e8f0fe;--bg2:#ffffff;--bg3:#dbe8fb;--acc:#3d4fd4;--acc2:#5c6bc0;--txt:#1e293b;--txt2:#334155;--txt3:#64748b;--brd:#c5d4f0}
+[data-theme="soft"]{--bg:#1a1226;--bg2:#241834;--bg3:#130e1e;--acc:#7c3aed;--acc2:#9f5ff0;--txt:#f1e9ff;--txt2:#c4aae8;--txt3:#8b6fb5;--brd:#3a2660}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:15px;min-height:100vh}
 .hdr{background:var(--bg3);padding:10px 14px 0;position:sticky;top:0;z-index:100;border-bottom:1px solid var(--brd)}
@@ -173,6 +175,43 @@ main{padding:10px 14px 88px}
 .help-section{background:var(--bg2);border-radius:11px;padding:13px 14px;margin-bottom:10px}
 .help-h{font-size:13px;font-weight:700;margin-bottom:7px;color:var(--txt)}
 .help-t{font-size:12px;color:var(--txt2);line-height:1.8}
+.ctrl-bar{display:flex;align-items:center;gap:6px;margin-left:auto}
+.theme-wrap{position:relative}
+.theme-btn{padding:4px 9px;border-radius:20px;border:1px solid var(--brd);background:var(--bg2);color:var(--txt2);font-size:11px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:4px;white-space:nowrap}
+.theme-btn:after{content:'▾';font-size:10px;opacity:.7}
+.theme-btn.open:after{content:'▴'}
+.theme-drop{display:none;position:absolute;top:calc(100% + 5px);right:0;background:var(--bg2);border:1px solid var(--brd);border-radius:10px;min-width:130px;overflow:hidden;z-index:999;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.theme-drop.open{display:block}
+.theme-opt{display:flex;align-items:center;gap:8px;padding:9px 13px;cursor:pointer;font-size:12px;color:var(--txt2)}
+.theme-opt:hover{background:var(--bg3)}
+.theme-opt.on{color:var(--acc);font-weight:700}
+.theme-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.note-card{background:var(--bg2);border-radius:var(--r);padding:13px 14px;margin-bottom:8px;border-left:3px solid var(--acc);cursor:pointer;position:relative}
+.note-card:active{opacity:.85}
+.note-title{font-size:13px;font-weight:600;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.note-preview{font-size:11px;color:var(--txt3);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.note-meta{font-size:10px;color:var(--txt3);margin-top:6px}
+.note-del{position:absolute;top:10px;right:10px;background:none;border:none;color:var(--txt3);font-size:18px;cursor:pointer;padding:2px 6px}
+.rec-widget{background:var(--bg2);border-radius:var(--r);padding:13px 14px;margin-bottom:12px;border:1px solid var(--brd)}
+.rec-widget-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.rec-widget-t{font-size:12px;font-weight:700;color:var(--txt2)}
+.rec-timer{font-size:13px;font-weight:700;color:var(--red);min-width:44px;text-align:right}
+.rec-btns{display:flex;gap:7px;flex-wrap:wrap}
+.rbtn{padding:7px 12px;border-radius:9px;border:none;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px}
+.rbtn.start{background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3)}
+.rbtn.stop-r{background:rgba(239,68,68,.85);color:#fff}
+.rbtn.play{background:rgba(16,185,129,.15);color:#34d399;border:1px solid rgba(16,185,129,.3)}
+.rbtn.save-r{background:rgba(61,79,212,.15);color:var(--acc2);border:1px solid rgba(61,79,212,.3)}
+.rbtn:disabled{opacity:.35;pointer-events:none}
+.note-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:500;align-items:flex-end}
+.note-ov.open{display:flex}
+.note-mdl{background:var(--bg2);border-radius:20px 20px 0 0;padding:18px 16px 36px;width:100%;max-height:95vh;display:flex;flex-direction:column}
+.note-mdl-body{flex:1;overflow-y:auto}
+.note-ta{width:100%;background:var(--bg3);border:1px solid var(--brd);border-radius:10px;padding:10px 12px;color:var(--txt);font-size:13px;outline:none;resize:none;min-height:200px;line-height:1.7;font-family:inherit}
+.note-ta:focus{border-color:var(--acc)}
+.note-voice-bar{display:flex;gap:8px;align-items:center;margin-top:10px}
+.btn-voice-note{padding:9px 14px;border-radius:10px;background:rgba(61,79,212,.15);color:var(--acc2);font-size:12px;font-weight:600;cursor:pointer;border:1px solid rgba(61,79,212,.3)}
+.btn-voice-note.on{background:#dc2626;color:#fff;border-color:#dc2626;animation:mpulse 1s infinite}
 </style>
 </head>
 <body>
@@ -181,10 +220,28 @@ main{padding:10px 14px 88px}
   <div class="hdr-top">
     <div class="logo"><img src="icon-192.png" alt=""></div>
     <div><div class="app-title">PESKOV Planner</div><div class="app-sub" id="dayLabel">...</div></div>
-    <div class="lang-bar">
-      <button class="lb on" onclick="setLang('ru')">RU</button>
-      <button class="lb" onclick="setLang('en')">EN</button>
-      <button class="lb" onclick="setLang('uz')">UZ</button>
+    <div class="ctrl-bar">
+      <div class="theme-wrap" id="themeWrap">
+        <button class="theme-btn" id="themeBtn" onclick="toggleThemeDrop()">
+          <span id="themeBtnLabel">Тема</span>
+        </button>
+        <div class="theme-drop" id="themeDrop">
+          <div class="theme-opt" id="topt_dark" onclick="setTheme('dark');toggleThemeDrop()">
+            <span class="theme-dot" style="background:#3d4fd4"></span>Тёмная
+          </div>
+          <div class="theme-opt" id="topt_light" onclick="setTheme('light');toggleThemeDrop()">
+            <span class="theme-dot" style="background:#3d4fd4;border:1px solid #c5d4f0"></span>Светлая
+          </div>
+          <div class="theme-opt" id="topt_soft" onclick="setTheme('soft');toggleThemeDrop()">
+            <span class="theme-dot" style="background:#7c3aed"></span>Фиолетовая
+          </div>
+        </div>
+      </div>
+      <div class="lang-bar">
+        <button class="lb on" id="lb_ru" onclick="setLang('ru')">RU</button>
+        <button class="lb" id="lb_en" onclick="setLang('en')">EN</button>
+        <button class="lb" id="lb_uz" onclick="setLang('uz')">UZ</button>
+      </div>
     </div>
   </div>
   <div id="stripWrap"><div class="dstrip" id="dstrip"></div></div>
@@ -193,13 +250,14 @@ main{padding:10px 14px 88px}
 <main id="main"></main>
 
 <button class="fab-mic" id="fabMic" onclick="openVoice()">🎙</button>
-<button class="fab" onclick="openAdd()">+</button>
+<button class="fab" id="mainFab" onclick="openFab()">+</button>
 
 <nav class="bnav">
   <button class="bni on" id="n0" onclick="setTab(0)"><span class="bni-ico">🏠</span><span id="nl0">Главная</span></button>
   <button class="bni" id="n1" onclick="setTab(1)"><span class="bni-ico">📅</span><span id="nl1">Календарь</span></button>
   <button class="bni" id="n2" onclick="setTab(2)"><span class="bni-ico">📋</span><span id="nl2">Все</span></button>
-  <button class="bni" id="n3" onclick="setTab(3)"><span class="bni-ico">⚙️</span><span id="nl3">Настройки</span></button>
+  <button class="bni" id="n3" onclick="setTab(3)"><span class="bni-ico">📝</span><span id="nl3">Заметки</span></button>
+  <button class="bni" id="n4" onclick="setTab(4)"><span class="bni-ico">⚙️</span><span id="nl4">Настройки</span></button>
 </nav>
 
 <!-- ADD/EDIT MODAL -->
@@ -292,6 +350,23 @@ main{padding:10px 14px 88px}
 <audio id="alarmAudio" style="display:none"></audio>
 
 
+<!-- NOTE EDIT MODAL -->
+<div class="note-ov" id="noteOv">
+  <div class="note-mdl">
+    <div class="mdl-t" id="noteMdlTitle">Заметка<button class="mclose" onclick="closeOv('noteOv')">✕</button></div>
+    <div class="note-mdl-body">
+      <div class="fg"><input class="fi" id="nTitle" placeholder="Заголовок..."></div>
+      <div class="fg"><textarea class="fi note-ta" id="nText" rows="10" placeholder="Текст..."></textarea></div>
+      <div class="note-voice-bar">
+        <button class="btn-voice-note" id="noteVoiceBtn" onclick="toggleNoteVoice()">🎤 Голос</button>
+        <span style="font-size:11px;color:var(--txt3)" id="noteVoiceStatus"></span>
+      </div>
+    </div>
+    <button class="btn-p" style="margin-top:14px" onclick="saveNote()">💾 Сохранить</button>
+    <button class="btn-d" id="noteDelBtn" onclick="deleteNote()" style="display:none">🗑 Удалить</button>
+  </div>
+</div>
+
 <!-- HELP MODAL -->
 <div class="ov" id="helpOv" style="align-items:flex-start;overflow-y:auto">
   <div class="mdl" style="border-radius:20px 20px 0 0;max-height:95vh;overflow-y:auto">
@@ -305,13 +380,75 @@ main{padding:10px 14px 88px}
   </div>
 </div>
 <script>
+// ===== I18N =====
+const LANG={
+  ru:{
+    home:'Главная',cal:'Календарь',all:'Все',notes:'Заметки',setts:'Настройки',
+    noTasks:'Нет задач на этот день',inWork:'В работе',done:'Выполнено',
+    search:'Поиск задач...',saved:'✅ Сохранено',deleted:'Удалено',
+    noOverdue:'✅ Просроченных задач нет',
+    newNote:'Новая заметка',editNote:'Редактировать',noteSaved:'Заметка сохранена',noteDel:'Заметка удалена',
+    noNotes:'Нет заметок',noNotesHint:'Нажмите + чтобы создать',
+    recStart:'⏺ Запись',recStop:'⏹ Стоп',recPlay:'▶ Слушать',recSave:'Как заметку',
+    voiceOn:'🎤 Голос',voiceOff:'⏹ Стоп',
+    MN:['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'],
+    DN:['Пн','Вт','Ср','Чт','Пт','Сб','Вс'],
+    today:'Сегодня',tomorrow:'Завтра',
+    total:'Всего',doneS:'Выполнено',inWorkS:'В работе',urgentS:'Срочных',
+    checkOverdue:'Проверить невыполненные',expCal:'Экспорт в Google Calendar (.ics)',expJSON:'Экспорт JSON',expCSV:'Экспорт CSV',clearDone:'Очистить выполненные',help:'Инструкция',
+    notifHint:'Нажмите чтобы включить уведомления',
+    notifInfo:'<b>O напоминаниях:</b><br>Уведомления работают пока Chrome запущен.',
+    recWidget:'Диктофон',
+  },
+  en:{
+    home:'Home',cal:'Calendar',all:'All',notes:'Notes',setts:'Settings',
+    noTasks:'No tasks for this day',inWork:'In progress',done:'Done',
+    search:'Search tasks...',saved:'Saved',deleted:'Deleted',
+    noOverdue:'No overdue tasks',
+    newNote:'New note',editNote:'Edit note',noteSaved:'Note saved',noteDel:'Note deleted',
+    noNotes:'No notes yet',noNotesHint:'Tap + to create one',
+    recStart:'Record',recStop:'Stop',recPlay:'Play',recSave:'Save as note',
+    voiceOn:'Voice',voiceOff:'Stop',
+    MN:['January','February','March','April','May','June','July','August','September','October','November','December'],
+    DN:['Mo','Tu','We','Th','Fr','Sa','Su'],
+    today:'Today',tomorrow:'Tomorrow',
+    total:'Total',doneS:'Done',inWorkS:'In progress',urgentS:'Urgent',
+    checkOverdue:'Check overdue',expCal:'Export to Google Calendar (.ics)',expJSON:'Export JSON',expCSV:'Export CSV',clearDone:'Clear done',help:'Guide',
+    notifHint:'Tap to enable notifications for alarms',
+    notifInfo:'<b>About reminders:</b><br>Notifications work while Chrome is open.',
+    recWidget:'Recorder',
+  },
+  uz:{
+    home:'Asosiy',cal:'Kalendar',all:'Barchasi',notes:'Eslatmalar',setts:'Sozlamalar',
+    noTasks:'Bu kun vazifalar yoq',inWork:'Jarayonda',done:'Bajarildi',
+    search:'Qidirish...',saved:'Saqlandi',deleted:'Ochirildi',
+    noOverdue:'Muddati otgan vazifalar yoq',
+    newNote:'Yangi eslatma',editNote:'Tahrirlash',noteSaved:'Eslatma saqlandi',noteDel:'Eslatma ochirildi',
+    noNotes:'Eslatmalar yoq',noNotesHint:'Yaratish uchun + bosing',
+    recStart:'Yozish',recStop:'Toxtatish',recPlay:'Tinglash',recSave:'Eslatma sifatida',
+    voiceOn:'Ovoz',voiceOff:'Toxtatish',
+    MN:['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentabr','Oktabr','Noyabr','Dekabr'],
+    DN:['Du','Se','Ch','Pa','Ju','Sh','Ya'],
+    today:'Bugun',tomorrow:'Ertaga',
+    total:'Jami',doneS:'Bajarildi',inWorkS:'Jarayonda',urgentS:'Shoshilinch',
+    checkOverdue:'Bajarilmaganlarni tekshirish',expCal:'Google Calendarga eksport (.ics)',expJSON:'JSON eksport',expCSV:'CSV eksport',clearDone:'Bajarilganlarni tozalash',help:'Qollanma',
+    notifHint:'Bildirishnomalarni yoqish uchun bosing',
+    notifInfo:'<b>Eslatmalar:</b><br>Chrome ochiq bolganda ishlaydi.',
+    recWidget:'Diktofon',
+  }
+};
+function t(k){return(LANG[lang]||LANG.ru)[k]||k;}
+
 // ===== STATE =====
 let tasks=[];
+let notes=JSON.parse(localStorage.getItem('pp_notes')||'[]');
 let selDate=new Date();
 let tab=0;
 let lang=localStorage.getItem('pp_lang')||'ru';
+let theme=localStorage.getItem('pp_theme')||'dark';
 let prio='low';
 let editId=null;
+let editNoteId=null;
 let rec=null;
 let recOn=false;
 let recSilenceTimer=null;
@@ -325,6 +462,8 @@ let editAttachments=[];
 let audioCtx=null;
 let alarmInterval=null;
 let searchQ='';
+let noteRecOn=false;let noteSpeech=null;
+let dictRec=null;let dictBlob=null;let dictAudioURL=null;let dictAudio=null;let dictOn=false;let dictTimer=null;let dictSecs=0;
 
 // ===== STORAGE =====
 function loadTasks(){
@@ -622,7 +761,7 @@ function showSysNotif(title,body,taskId){
 function scheduleReminders(){
   reminderTimers.forEach(clearTimeout);
   reminderTimers=[];
-  if(Notification.permission!=='granted')return;
+  const notifOk=Notification.permission==='granted';
   const now=new Date();
   const todStr=today();
   for(const tk of tasks){
@@ -634,8 +773,8 @@ function scheduleReminders(){
       const diff=rt-now;
       if(diff>0&&diff<7*24*60*60*1000){
         reminderTimers.push(setTimeout(()=>{
-          showSysNotif('🔔 Напоминание: '+tk.name,tk.date===todStr?'Сегодня':''+fmtDisp(tk.date)+(tk.timeStart?' в '+tk.timeStart:''),tk.id);
-          playAlarm();
+          if(notifOk)showSysNotif('🔔 '+tk.name,tk.date===todStr?t('today'):fmtDisp(tk.date)+(tk.timeStart?' '+tk.timeStart:''),tk.id);
+          playAlarm();showUrgentAlert(tk,'🔔 Напоминание!');
         },diff));
       }
     }
@@ -646,8 +785,8 @@ function scheduleReminders(){
       const diff=tt-now-60*60*1000;
       if(diff>0){
         reminderTimers.push(setTimeout(()=>{
-          showSysNotif('⚠️ Срочная задача через 1 час!',tk.name+' — '+tk.timeStart,tk.id);
-          playAlarm();showUrgentAlert(tk,'⚠️ Срочная задача через 1 час!');
+          if(notifOk)showSysNotif('⚠️ '+tk.name,tk.timeStart,tk.id);
+          playAlarm();showUrgentAlert(tk,'⚠️ Срочно через 1 час!');
         },diff));
       }
     }
@@ -658,8 +797,8 @@ function scheduleReminders(){
       const diff=tt-now;
       if(diff>0){
         reminderTimers.push(setTimeout(()=>{
-          showSysNotif('⏰ Начинается: '+tk.name,tk.timeStart+(tk.timeEnd?'–'+tk.timeEnd:''),tk.id);
-          playAlarm();showUrgentAlert(tk,'⏰ Задача начинается сейчас!');
+          if(notifOk)showSysNotif('⏰ '+tk.name,tk.timeStart+(tk.timeEnd?'–'+tk.timeEnd:''),tk.id);
+          playAlarm();showUrgentAlert(tk,'⏰ Начинается!');
         },diff));
       }
     }
@@ -684,10 +823,8 @@ function markAlertDone(){
 
 // ===== OVERDUE CHECKER =====
 function checkOverdue(){
-  const yest=new Date();yest.setDate(yest.getDate()-1);
-  const yStr=fmt(yest);
-  const overdue=tasks.filter(t=>!t.done&&t.status!=='moved'&&t.date<today()&&t.date>='2020-01-01');
-  if(!overdue.length)return;
+  const overdue=tasks.filter(tk=>!tk.done&&tk.status!=='moved'&&tk.date<today()&&tk.date>='2020-01-01');
+  if(!overdue.length){showToast(t('noOverdue'));return;}
   const list=document.getElementById('overdueList');
   list.innerHTML=overdue.map(tk=>`
     <div class="ot-item" id="oi_${tk.id}">
@@ -798,7 +935,7 @@ function saveTask(){
     saveAtts(id,editAttachments);
     setSD(new Date(d+'T12:00:00'));
   }
-  save();closeOv('addOv');renderDstrip();renderAll();scheduleReminders();showToast('✅ Сохранено');
+  save();closeOv('addOv');renderDstrip();renderAll();scheduleReminders();showToast(t('saved'));
 }
 
 function deleteEditing(){
@@ -863,34 +1000,36 @@ function dlAtt(taskId,name){
 }
 
 function renderList(list){
-  const pend=list.filter(t=>!t.done&&t.status!=='moved');
-  const done=list.filter(t=>t.done||t.status==='moved');
-  if(!list.length)return`<div class="empty"><div class="empty-ico">📋</div><div class="empty-t">Нет задач на этот день</div></div>`;
+  const pend=list.filter(tk=>!tk.done&&tk.status!=='moved');
+  const dn=list.filter(tk=>tk.done||tk.status==='moved');
+  if(!list.length)return`<div class="empty"><div class="empty-ico">📋</div><div class="empty-t">${t('noTasks')}</div></div>`;
   let h='';
-  if(pend.length)h+=`<div class="sec-hdr"><span class="sec-t">В работе</span><span class="sec-c">${pend.length}</span></div>`+pend.map(taskCard).join('');
-  if(done.length)h+=`<div class="sec-hdr" style="margin-top:14px"><span class="sec-t">Выполнено</span><span class="sec-c">${done.length}</span></div>`+done.map(taskCard).join('');
+  if(pend.length)h+=`<div class="sec-hdr"><span class="sec-t">${t('inWork')}</span><span class="sec-c">${pend.length}</span></div>`+pend.map(taskCard).join('');
+  if(dn.length)h+=`<div class="sec-hdr" style="margin-top:14px"><span class="sec-t">${t('done')}</span><span class="sec-c">${dn.length}</span></div>`+dn.map(taskCard).join('');
   return h;
 }
 
 function renderAll(){
-  if(tab===0)document.getElementById('main').innerHTML=renderList(tasks.filter(t=>t.date===fmt(selDate)));
+  if(tab===0)document.getElementById('main').innerHTML=renderList(tasks.filter(tk=>tk.date===fmt(selDate)));
   else if(tab===1)renderCal();
   else if(tab===2)renderAllTasks();
+  else if(tab===3)renderNotes();
   else renderSets();
   updateNav();
+  const fab=document.getElementById('mainFab');if(fab)fab.textContent=tab===3?'✏️':'+';
 }
 
 function renderAllTasks(){
   let list=[...tasks].sort((a,b)=>(a.date+a.timeStart).localeCompare(b.date+b.timeStart));
   if(searchQ)list=list.filter(t=>t.name.toLowerCase().includes(searchQ)||(t.note||'').toLowerCase().includes(searchQ));
   document.getElementById('main').innerHTML=`
-    <div class="search-box"><span class="search-ico">🔍</span><input placeholder="Поиск задач..." value="${searchQ}" oninput="searchQ=this.value.toLowerCase();renderAllTasks()"></div>
+    <div class="search-box"><span class="search-ico">🔍</span><input placeholder="${t('search')}" value="${searchQ}" oninput="searchQ=this.value.toLowerCase();renderAllTasks()"></div>
     ${renderList(list)}`;
 }
 
 function renderCal(){
-  const MN=['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
-  const DN=['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+  const MN=t('MN');
+  const DN=t('DN');
   const first=new Date(calYear,calMonth,1);
   const last=new Date(calYear,calMonth+1,0);
   let startDow=(first.getDay()+6)%7;
@@ -927,28 +1066,26 @@ function renderCal(){
 }
 
 function renderSets(){
-  const tot=tasks.length,dn=tasks.filter(t=>t.done).length,urg=tasks.filter(t=>t.priority==='urgent'&&!t.done).length;
-  const nb=Notification.permission!=='granted'?`<div class="notif-banner" onclick="requestNotifPerm()">🔔 Нажмите чтобы включить уведомления — нужно для будильника и напоминаний</div>`:'';
+  const tot=tasks.length,dn=tasks.filter(tk=>tk.done).length,urg=tasks.filter(tk=>tk.priority==='urgent'&&!tk.done).length;
+  const nb=Notification.permission!=='granted'?`<div class="notif-banner" onclick="requestNotifPerm()">🔔 ${t('notifHint')}</div>`:'';
   document.getElementById('main').innerHTML=`
     ${nb}
     <div class="stats-grid">
-      <div class="stat-card"><div class="stat-n">${tot}</div><div class="stat-l">Всего</div></div>
-      <div class="stat-card"><div class="stat-n" style="color:var(--grn)">${dn}</div><div class="stat-l">Выполнено</div></div>
-      <div class="stat-card"><div class="stat-n" style="color:var(--ylw)">${tot-dn}</div><div class="stat-l">В работе</div></div>
-      <div class="stat-card"><div class="stat-n" style="color:var(--red)">${urg}</div><div class="stat-l">Срочных</div></div>
+      <div class="stat-card"><div class="stat-n">${tot}</div><div class="stat-l">${t('total')}</div></div>
+      <div class="stat-card"><div class="stat-n" style="color:var(--grn)">${dn}</div><div class="stat-l">${t('doneS')}</div></div>
+      <div class="stat-card"><div class="stat-n" style="color:var(--ylw)">${tot-dn}</div><div class="stat-l">${t('inWorkS')}</div></div>
+      <div class="stat-card"><div class="stat-n" style="color:var(--red)">${urg}</div><div class="stat-l">${t('urgentS')}</div></div>
     </div>
     <div style="background:var(--bg2);border-radius:var(--r);overflow:hidden;margin-bottom:12px">
-      <div class="srow" onclick="checkOverdue()"><span class="srow-ico">⚠️</span><span class="srow-lbl">Проверить невыполненные</span><span>›</span></div>
-      <div class="srow" onclick="exportICS()"><span class="srow-ico">📆</span><span class="srow-lbl">Экспорт в Google Calendar (.ics)</span><span>›</span></div>
-      <div class="srow" onclick="exportJSON()"><span class="srow-ico">📤</span><span class="srow-lbl">Экспорт JSON</span><span>›</span></div>
-      <div class="srow" onclick="exportCSV()"><span class="srow-ico">📋</span><span class="srow-lbl">Экспорт CSV</span><span>›</span></div>
-      <div class="srow" onclick="clearDone()"><span class="srow-ico">🗑</span><span class="srow-lbl">Очистить выполненные</span><span>›</span></div>
-      <div class="srow" onclick="openHelp()"><span class="srow-ico">📖</span><span class="srow-lbl">Инструкция по использованию</span><span>›</span></div>
+      <div class="srow" onclick="checkOverdue()"><span class="srow-ico">⚠️</span><span class="srow-lbl">${t('checkOverdue')}</span><span>›</span></div>
+      <div class="srow" onclick="exportICS()"><span class="srow-ico">📆</span><span class="srow-lbl">${t('expCal')}</span><span>›</span></div>
+      <div class="srow" onclick="exportJSON()"><span class="srow-ico">📤</span><span class="srow-lbl">${t('expJSON')}</span><span>›</span></div>
+      <div class="srow" onclick="exportCSV()"><span class="srow-ico">📋</span><span class="srow-lbl">${t('expCSV')}</span><span>›</span></div>
+      <div class="srow" onclick="clearDone()"><span class="srow-ico">🗑</span><span class="srow-lbl">${t('clearDone')}</span><span>›</span></div>
+      <div class="srow" onclick="openHelp()"><span class="srow-ico">📖</span><span class="srow-lbl">${t('help')}</span><span>›</span></div>
     </div>
     <div style="font-size:11px;color:var(--txt3);padding:10px;background:var(--bg2);border-radius:var(--r)">
-      <b>💡 О напоминаниях:</b><br>
-      Уведомления работают пока Chrome запущен (даже в фоне). Для надёжных напоминаний — не закрывайте браузер.
-      Для полностью фоновых уведомлений требуется сервер.
+${t('notifInfo')}
     </div>`;
 }
 
@@ -956,7 +1093,7 @@ function renderDstrip(){
   const strip=document.getElementById('dstrip');
   strip.innerHTML='';
   const now=new Date();
-  const DN=['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+  const DN=t('DN');
   for(let i=-3;i<=21;i++){
     const d=new Date(now);d.setDate(now.getDate()+i);
     const ds=fmt(d);
@@ -973,7 +1110,7 @@ function renderDstrip(){
   if(active)setTimeout(()=>active.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'}),50);
   const isT=fmt(selDate)===today();
   const isTom=fmt(selDate)===fmt(new Date(new Date().setDate(new Date().getDate()+1)));
-  document.getElementById('dayLabel').textContent=isT?'Сегодня':isTom?'Завтра':fmtDisp(fmt(selDate));
+  document.getElementById('dayLabel').textContent=isT?t('today'):isTom?t('tomorrow'):fmtDisp(fmt(selDate));
 }
 
 function calPrev(){if(--calMonth<0){calMonth=11;calYear--}renderCal()}
@@ -982,20 +1119,145 @@ function calSel(ds){setSD(new Date(ds+'T12:00:00'));renderDstrip();renderCal()}
 
 function setTab(n){
   tab=n;
-  [0,1,2,3].forEach(i=>document.getElementById('n'+i).classList.toggle('on',i===n));
+  [0,1,2,3,4].forEach(i=>document.getElementById('n'+i).classList.toggle('on',i===n));
   document.getElementById('stripWrap').style.display=n===1?'none':'block';
   renderAll();
 }
 function updateNav(){
-  const nl=['Главная','Календарь','Все','Настройки'];
-  [0,1,2,3].forEach(i=>document.getElementById('nl'+i).textContent=nl[i]);
+  const nl=[t('home'),t('cal'),t('all'),t('notes'),t('setts')];
+  [0,1,2,3,4].forEach(i=>{const el=document.getElementById('nl'+i);if(el)el.textContent=nl[i];});
 }
 
 function setLang(l){
   lang=l;localStorage.setItem('pp_lang',l);
-  document.querySelectorAll('.lb').forEach(b=>b.classList.toggle('on',b.textContent===l.toUpperCase()));
+  ['ru','en','uz'].forEach(x=>{const b=document.getElementById('lb_'+x);if(b)b.classList.toggle('on',x===l);});
   renderDstrip();renderAll();
 }
+function setTheme(th){
+  theme=th;localStorage.setItem('pp_theme',th);
+  document.documentElement.setAttribute('data-theme',th==='dark'?'':th);
+  const labels={dark:'Тёмная',light:'Светлая',soft:'Фиолетовая'};
+  const el=document.getElementById('themeBtnLabel');if(el)el.textContent=labels[th]||'Тема';
+  ['dark','light','soft'].forEach(x=>{const o=document.getElementById('topt_'+x);if(o)o.classList.toggle('on',x===th);});
+}
+function toggleThemeDrop(){
+  const btn=document.getElementById('themeBtn');
+  const drop=document.getElementById('themeDrop');
+  if(!btn||!drop)return;
+  const open=drop.classList.toggle('open');
+  btn.classList.toggle('open',open);
+  if(open){
+    const close=e=>{if(!document.getElementById('themeWrap').contains(e.target)){drop.classList.remove('open');btn.classList.remove('open');document.removeEventListener('click',close);}};
+    setTimeout(()=>document.addEventListener('click',close),0);
+  }
+}
+
+
+// ===== NOTES =====
+function saveNotes(){localStorage.setItem('pp_notes',JSON.stringify(notes));}
+function escHtml(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function fmtNoteDate(iso){if(!iso)return'';const d=new Date(iso);return d.toLocaleDateString(lang==='en'?'en-GB':'ru-RU',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});}
+function fmtSecs(s){return Math.floor(s/60).toString().padStart(2,'0')+':'+((s%60)).toString().padStart(2,'0');}
+
+function renderNotes(){
+  const main=document.getElementById('main');
+  const startBtn=dictOn?`<button class="rbtn stop-r" id="dictStopBtn" onclick="dictStop()">${t('recStop')}</button>`:
+    `<button class="rbtn start" id="dictStartBtn" onclick="dictStart()">${t('recStart')}</button>`;
+  const recHtml=`<div class="rec-widget"><div class="rec-widget-hdr"><span class="rec-widget-t">🎤 ${t('recWidget')}</span><span class="rec-timer" id="dictTimerEl">${dictOn?fmtSecs(dictSecs):''}</span></div><div class="rec-btns">${startBtn}<button class="rbtn play" id="dictPlayBtn" onclick="dictPlay()" ${dictBlob?'':'disabled'}>${t('recPlay')}</button><button class="rbtn save-r" id="dictSaveBtn" onclick="dictSaveNote()" ${dictBlob?'':'disabled'}>${t('recSave')}</button></div></div>`;
+  if(!notes.length){main.innerHTML=recHtml+`<div class="empty"><div class="empty-ico">📝</div><div class="empty-t">${t('noNotes')}</div><div style="font-size:11px;color:var(--txt3);margin-top:6px">${t('noNotesHint')}</div></div>`;return;}
+  const sorted=[...notes].sort((a,b)=>(b.updated||b.created).localeCompare(a.updated||a.created));
+  main.innerHTML=recHtml+sorted.map(n=>`<div class="note-card" onclick="openEditNote('${n.id}')"><div class="note-title">${escHtml(n.title||t('newNote'))}</div><div class="note-preview">${escHtml(n.text||'')}</div><div class="note-meta">${fmtNoteDate(n.updated||n.created)}</div><button class="note-del" onclick="event.stopPropagation();deleteNoteById('${n.id}')">✕</button></div>`).join('');
+}
+
+function openNewNote(){
+  editNoteId=null;
+  document.getElementById('nTitle').value='';document.getElementById('nText').value='';
+  document.getElementById('noteMdlTitle').innerHTML=t('newNote')+'<button class="mclose" onclick="closeOv(\'noteOv\')">✕</button>';
+  document.getElementById('noteDelBtn').style.display='none';
+  const vb=document.getElementById('noteVoiceBtn');if(vb){vb.textContent=t('voiceOn');vb.classList.remove('on');}
+  document.getElementById('noteVoiceStatus').textContent='';
+  document.getElementById('noteOv').classList.add('open');
+}
+function openEditNote(id){
+  const n=notes.find(x=>x.id===id);if(!n)return;
+  editNoteId=id;
+  document.getElementById('nTitle').value=n.title||'';document.getElementById('nText').value=n.text||'';
+  document.getElementById('noteMdlTitle').innerHTML=t('editNote')+'<button class="mclose" onclick="closeOv(\'noteOv\')">✕</button>';
+  document.getElementById('noteDelBtn').style.display='block';
+  const vb=document.getElementById('noteVoiceBtn');if(vb){vb.textContent=t('voiceOn');vb.classList.remove('on');}
+  document.getElementById('noteVoiceStatus').textContent='';
+  document.getElementById('noteOv').classList.add('open');
+}
+function saveNote(){
+  const title=(document.getElementById('nTitle').value||'').trim();
+  const text=(document.getElementById('nText').value||'').trim();
+  if(!title&&!text){showToast('⚠️ Нет текста');return;}
+  stopNoteVoice();
+  if(editNoteId){const n=notes.find(x=>x.id===editNoteId);if(n){n.title=title||t('newNote');n.text=text;n.updated=new Date().toISOString();}}
+  else notes.push({id:Date.now().toString(),title:title||t('newNote'),text,created:new Date().toISOString(),updated:new Date().toISOString()});
+  saveNotes();closeOv('noteOv');if(tab===3)renderNotes();showToast(t('noteSaved'));
+}
+function deleteNote(){if(editNoteId)deleteNoteById(editNoteId);closeOv('noteOv');}
+function deleteNoteById(id){notes=notes.filter(n=>n.id!==id);saveNotes();if(tab===3)renderNotes();showToast(t('noteDel'));}
+
+function toggleNoteVoice(){if(noteRecOn)stopNoteVoice();else startNoteVoice();}
+function startNoteVoice(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){showToast('⚠️ Speech API не поддерживается');return;}
+  noteSpeech=new SR();noteSpeech.lang=lang==='uz'?'uz-UZ':lang==='en'?'en-US':'ru-RU';
+  noteSpeech.continuous=true;noteSpeech.interimResults=true;
+  let base=(document.getElementById('nText')||{value:''}).value;
+  noteSpeech.onresult=e=>{
+    let interim='',final='';
+    for(let i=e.resultIndex;i<e.results.length;i++){if(e.results[i].isFinal)final+=e.results[i][0].transcript;else interim+=e.results[i][0].transcript;}
+    if(final){base=(base+(base?'\n':'')+formatNoteTranscript(final)).trim();const ta=document.getElementById('nText');if(ta)ta.value=base;const vs=document.getElementById('noteVoiceStatus');if(vs)vs.textContent='';}
+    else{const vs=document.getElementById('noteVoiceStatus');if(vs)vs.textContent=interim;}
+  };
+  noteSpeech.onerror=()=>stopNoteVoice();
+  noteSpeech.onend=()=>{if(noteRecOn)try{noteSpeech.start();}catch(e){}};
+  noteSpeech.start();noteRecOn=true;
+  const vb=document.getElementById('noteVoiceBtn');if(vb){vb.textContent=t('voiceOff');vb.classList.add('on');}
+}
+function stopNoteVoice(){
+  if(noteSpeech)try{noteSpeech.stop();}catch(e){}
+  noteSpeech=null;noteRecOn=false;
+  const vb=document.getElementById('noteVoiceBtn');if(vb){vb.textContent=t('voiceOn');vb.classList.remove('on');}
+  const vs=document.getElementById('noteVoiceStatus');if(vs)vs.textContent='';
+}
+function formatNoteTranscript(text){
+  const maps={
+    ru:{1:['первое','первый','первая'],2:['второе','второй'],3:['третье','третий'],4:['четвертое','четвертый'],5:['пятое','пятый']},
+    en:{1:['first'],2:['second'],3:['third'],4:['fourth'],5:['fifth']},
+    uz:{1:['birinchi'],2:['ikkinchi'],3:['uchinchi'],4:['tortinchi'],5:['beshinchi']}
+  };
+  const m=maps[lang]||maps.ru;const numMap={};
+  Object.entries(m).forEach(([num,words])=>words.forEach(w=>{numMap[w]=parseInt(num);}));
+  const words=text.trim().split(/\s+/);const lines=[];let cur=null;let num=0;
+  for(const w of words){const wl=w.toLowerCase().replace(/[,.:;!?]/g,'');if(numMap[wl]!==undefined){if(cur!==null)lines.push(num+') '+cur.trim());num=numMap[wl];cur='';}else if(cur!==null){cur+=' '+w;}else{cur=w;}}
+  if(cur!==null)lines.push(num?num+') '+cur.trim():cur.trim());
+  return lines.join('\n');
+}
+
+function dictStart(){
+  navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
+    const chunks=[];
+    dictRec=new MediaRecorder(stream);
+    dictRec.ondataavailable=e=>chunks.push(e.data);
+    dictRec.onstop=()=>{dictBlob=new Blob(chunks,{type:'audio/webm'});dictAudioURL=URL.createObjectURL(dictBlob);stream.getTracks().forEach(tr=>tr.stop());if(tab===3)renderNotes();};
+    dictRec.start();dictOn=true;dictSecs=0;
+    dictTimer=setInterval(()=>{dictSecs++;const el=document.getElementById('dictTimerEl');if(el)el.textContent=fmtSecs(dictSecs);},1000);
+    if(tab===3)renderNotes();
+  }).catch(()=>showToast('⚠️ Нет доступа к микрофону'));
+}
+function dictStop(){clearInterval(dictTimer);dictOn=false;if(dictRec&&dictRec.state!=='inactive')dictRec.stop();}
+function dictPlay(){if(!dictAudioURL){showToast('Нет записи');return;}if(dictAudio)dictAudio.pause();dictAudio=new Audio(dictAudioURL);dictAudio.play();}
+function dictSaveNote(){
+  if(!dictBlob){showToast('Нет записи');return;}
+  const now=new Date().toLocaleString(lang==='en'?'en-GB':'ru-RU');
+  notes.push({id:Date.now().toString(),title:'🎤 '+now,text:'[Аудиозапись]',created:new Date().toISOString(),updated:new Date().toISOString()});
+  saveNotes();if(tab===3)renderNotes();showToast(t('noteSaved'));
+}
+function openFab(){if(tab===3)openNewNote();else openAdd();}
 
 // ===== EXPORT =====
 function exportICS(){
@@ -1013,18 +1275,21 @@ function exportICS(){
 }
 function exportJSON(){const b=new Blob([JSON.stringify(tasks,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='peskov_tasks.json';a.click()}
 function exportCSV(){const r=[['Name','Date','Start','End','Remind','Priority','Done','Note'],...tasks.map(t=>[t.name,t.date,t.timeStart,t.timeEnd,t.remind,t.priority,t.done,t.note])];const c=r.map(r=>r.map(c=>'"'+String(c||'').replace(/"/g,'""')+'"').join(',')).join('\n');const b=new Blob([c],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='peskov_tasks.csv';a.click()}
-function clearDone(){tasks=tasks.filter(t=>!t.done);save();renderAll();renderDstrip();showToast('🗑 Готово')}
+function clearDone(){tasks=tasks.filter(tk=>!tk.done);save();renderAll();renderDstrip();showToast(t('deleted'))}
 
 // ===== HELPERS =====
 function closeOv(id){
   document.getElementById(id).classList.remove('open');
   if(id==='voiceOv')stopRec();
+  if(id==='noteOv')stopNoteVoice();
 }
 function showToast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2800)}
 
 // ===== INIT =====
 function init(){
   loadTasks();
+  theme=localStorage.getItem('pp_theme')||'dark';setTheme(theme);
+  lang=localStorage.getItem('pp_lang')||'ru';['ru','en','uz'].forEach(x=>{const b=document.getElementById('lb_'+x);if(b)b.classList.toggle('on',x===lang);});
   if(!tasks.length){
     const td=today(),tm=fmt(new Date(new Date().setDate(new Date().getDate()+1)));
     tasks=[

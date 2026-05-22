@@ -213,7 +213,11 @@ main{padding:10px 14px 88px}
       <div><label class="fl">Начало</label><input class="fi" id="iTimeS" type="time"></div>
       <div><label class="fl">Конец</label><input class="fi" id="iTimeE" type="time"></div>
     </div>
-    <div class="fg"><label class="fl">Напомнить в</label><input class="fi" id="iRemind" type="time" placeholder="—"></div>
+    <div class="fg" style="background:rgba(255,107,53,.08);border:1px solid rgba(255,107,53,.25);border-radius:10px;padding:11px 13px">
+  <label class="fl" style="color:#fb923c;font-weight:700;font-size:12px">⏰ БУДИЛЬНИК — уведомить в это время</label>
+  <input class="fi" id="iRemind" type="time" style="border-color:rgba(255,107,53,.35)">
+  <div style="font-size:10px;color:#94a3b8;margin-top:5px">Звуковое уведомление + экранный сигнал в указанное время в день задачи</div>
+</div>
     <div class="fg">
       <label class="fl">Приоритет</label>
       <div class="prw">
@@ -240,8 +244,9 @@ main{padding:10px 14px 88px}
     <div class="vanim" id="vanim">🎙</div>
     <div class="vtitle" id="vtitle">Нажмите «Начать» и говорите</div>
     <div class="vhint">
+      <b>Говорите ОДНУ фразу, затем пауза — задача создастся сама.</b><br><br>
       «25 мая подготовить договор с 10 до 11, средний»<br>
-      «Завтра встреча с советниками в 14 часов, срочный»<br>
+      «Завтра встреча с директором в 14 часов, срочный»<br>
       «27 июня 2027 конференция с 9 до 17»<br>
       «Перенеси встречу на 30 мая в 15:00»<br>
       «Удали брифинг» · «Выполни отчёт»
@@ -525,52 +530,51 @@ function toggleVoice(){if(recOn)stopRec();else startRec()}
 
 function startRec(){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SR){document.getElementById('vstatus').textContent='⚠️ Только Chrome поддерживает голосовой ввод';document.getElementById('vstatus').className='vstatus err';return}
+  if(!SR){
+    document.getElementById('vstatus').textContent='⚠️ Только Chrome поддерживает голосовой ввод';
+    document.getElementById('vstatus').className='vstatus err';
+    return;
+  }
   if(rec){try{rec.abort()}catch(e){}}
   rec=new SR();
   rec.lang='ru-RU';
   rec.interimResults=true;
-  rec.continuous=true;  // НЕПРЕРЫВНЫЙ режим — не обрывается!
-  rec.maxAlternatives=3;
+  rec.continuous=false; // ОДНА фраза за раз — нет дублирования!
+  rec.maxAlternatives=1;
   recOn=true;
   document.getElementById('vanim').classList.add('on');
   document.getElementById('fabMic').classList.add('on');
   document.getElementById('voiceBtn').textContent='■ Стоп';
-  document.getElementById('vtitle').textContent='🔴 Слушаю...';
-
-  let finalText='';
-  let interimText='';
+  document.getElementById('vtitle').textContent='🔴 Слушаю... (пауза = обработка)';
 
   rec.onresult=e=>{
-    finalText='';interimText='';
-    for(let r of e.results){
-      if(r.isFinal)finalText+=r[0].transcript;
-      else interimText+=r[0].transcript;
+    let fin='',inter='';
+    // e.resultIndex — только НОВЫЕ результаты, нет дублей!
+    for(let i=e.resultIndex;i<e.results.length;i++){
+      if(e.results[i].isFinal)fin+=e.results[i][0].transcript;
+      else inter+=e.results[i][0].transcript;
     }
-    document.getElementById('vres').textContent=finalText||interimText||'...';
-    // Таймер тишины: 3 секунды без речи — обрабатываем
-    clearTimeout(recSilenceTimer);
-    if(finalText){
-      recSilenceTimer=setTimeout(()=>{
-        const result=processVoice(finalText);
-        const el=document.getElementById('vstatus');
-        el.textContent=result;
-        el.className='vstatus'+(result.startsWith('❌')?' err':'');
-        finalText='';
-      },1500);
+    document.getElementById('vres').textContent=fin||inter||'...';
+    if(fin){
+      const result=processVoice(fin);
+      const el=document.getElementById('vstatus');
+      el.textContent=result;
+      el.className='vstatus'+(result.startsWith('❌')?' err':'');
     }
   };
   rec.onerror=e=>{
-    if(e.error==='aborted')return;
-    document.getElementById('vstatus').textContent='⚠️ '+e.error+(e.error==='not-allowed'?' — разрешите микрофон':'');
-    document.getElementById('vstatus').className='vstatus err';
-    stopRec();
+    if(e.error==='aborted'||e.error==='no-speech')return;
+    if(e.error==='not-allowed'){
+      document.getElementById('vstatus').textContent='⚠️ Разрешите доступ к микрофону в браузере';
+      document.getElementById('vstatus').className='vstatus err';
+      stopRec();return;
+    }
   };
   rec.onend=()=>{
-    // continuous=true не должен останавливаться, но на некоторых браузерах — перезапускаем
-    if(recOn){setTimeout(()=>{try{rec.start()}catch(e){stopRec()}},300)}
+    // После паузы/окончания фразы — автоматически слушаем следующую
+    if(recOn){setTimeout(()=>{try{rec.start()}catch(e){stopRec()}},250)}
   };
-  try{rec.start()}catch(e){recOn=false;showToast('⚠️ Не удалось запустить микрофон')}
+  try{rec.start()}catch(e){recOn=false;showToast('⚠️ Ошибка микрофона')}
 }
 
 function stopRec(){
@@ -838,7 +842,7 @@ function taskCard(tk){
     <div class="tname">${tk.name}</div>
     <div class="tmeta">
       ${tRange?`<span class="ttime">🕐 ${tRange}</span>`:''}
-      ${tk.remind?`<span class="ttime">🔔 ${tk.remind}</span>`:''}
+      ${tk.remind?`<span class="ttime" style="color:#fb923c;font-weight:600">⏰ ${tk.remind}</span>`:''}
       ${bTxt?`<span class="tbadge ${bCls}">${bTxt}</span>`:''}
     </div>
     ${tk.note?`<div class="ttime" style="margin-top:3px;color:var(--txt3);font-size:10px">${tk.note.substring(0,60)}${tk.note.length>60?'...':''}</div>`:''}

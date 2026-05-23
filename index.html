@@ -375,7 +375,7 @@ select.fi{cursor:pointer;appearance:none;-webkit-appearance:none}
 </nav>
 <!-- FAB -->
 <button class="fab" id="mainFab" onclick="openFab()">+</button>
-<button class="voice-fab" id="voiceFab" onclick="openVoiceQuickAdd()" title="Голосовой ввод">🎙</button>
+<button class="voice-fab" id="voiceFab" onclick="onVoiceFab()" title="Голосовой ввод">🎙</button>
 <!-- PREVIEW OVERLAY -->
 <div class="preview-mdl" id="previewOv" onclick="if(event.target===this)closePreview()">
   <button class="preview-close" onclick="closePreview()">✕</button>
@@ -957,7 +957,11 @@ function renderCal(){
   document.getElementById('main').innerHTML=h;
 }
 function shiftCal(d){calMonth+=d;if(calMonth<0){calMonth=11;calYear--;}if(calMonth>11){calMonth=0;calYear++;}renderCal();}
-function calClick(ds){selDate=new Date(ds+'T12:00:00');tab=0;setTab(0);}
+function calClick(ds){
+  selDate=new Date(ds+'T12:00:00');
+  // Остаёмся на вкладке календаря, перерисовываем с задачами выбранного дня
+  renderCal();
+}
 
 function renderSets(){
   const tot=tasks.length,dn=tasks.filter(tk=>tk.done).length,urg=tasks.filter(tk=>tk.priority==='urgent'&&!tk.done).length;
@@ -1459,6 +1463,8 @@ function startNoteVoice(){
   stopNoteVoice();
   const ta=document.getElementById('nText');
   let baseText=(ta?ta.value:'').trim();
+  // Дедупликация: храним последний добавленный фрагмент
+  let lastAdded='';
   noteSpeech=new SR();
   noteSpeech.lang=lang==='uz'?'uz-UZ':lang==='en'?'en-US':'ru-RU';
   noteSpeech.continuous=true;
@@ -1469,6 +1475,13 @@ function startNoteVoice(){
       if(!e.results[i].isFinal)continue;
       const raw=e.results[i][0].transcript.trim();
       if(!raw)continue;
+      // Пропустить если это повтор последнего результата
+      if(raw===lastAdded||raw===lastAdded+' '+lastAdded)continue;
+      // Пропустить если содержит только повторяющиеся слова
+      const words=raw.split(' ');
+      const unique=new Set(words.map(w=>w.toLowerCase()));
+      if(words.length>=4&&unique.size<=words.length/3)continue;
+      lastAdded=raw;
       const converted=convertNumberWords(raw);
       const formatted=formatNoteTranscript(converted);
       baseText=(baseText+(baseText?'\n':'')+formatted).trim();
@@ -1479,7 +1492,10 @@ function startNoteVoice(){
     if(e.error!=='no-speech'&&e.error!=='aborted')stopNoteVoice();
   };
   noteSpeech.onend=()=>{
-    if(noteRecOn&&noteSpeech)try{noteSpeech.start();}catch(ex){}
+    if(noteRecOn&&noteSpeech){
+      // Сбросить lastAdded при перезапуске чтобы не блокировать новый ввод
+      try{noteSpeech.start();}catch(ex){}
+    }
   };
   noteRecOn=true;
   try{noteSpeech.start();}catch(e){showToast('⚠️ Ошибка запуска');return;}
@@ -1725,6 +1741,16 @@ function decryptSync(encrypted, pwd){
 // ===== NLP ПАРСЕР ЗАДАЧИ ИЗ ГОЛОСА =====
 let vqRec=null,vqRecOn=false,vqText='',vqParsed=null;
 
+function onVoiceFab(){
+  if(tab===3){
+    // На вкладке заметок — открываем новую голосовую заметку
+    openNewNote();
+    // Небольшая задержка чтобы оверлей открылся, потом запускаем голос
+    setTimeout(()=>startNoteVoice(),300);
+  } else {
+    openVoiceQuickAdd();
+  }
+}
 function openVoiceQuickAdd(){
   vqText='';vqParsed=null;
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
@@ -1742,12 +1768,14 @@ function openVoiceQuickAdd(){
   document.getElementById('vqOkBtn').style.display='none';
   document.getElementById('voiceQuickOv').classList.add('open');
   vqRecOn=true;
-  let finalTxt='';
+  let finalTxt='';let vqLastAdded='';
   vqRec.onresult=e=>{
     let interim='';
     for(let i=e.resultIndex;i<e.results.length;i++){
-      if(e.results[i].isFinal)finalTxt+=' '+e.results[i][0].transcript.trim();
-      else interim+=e.results[i][0].transcript;
+      if(e.results[i].isFinal){
+        const seg=e.results[i][0].transcript.trim();
+        if(seg&&seg!==vqLastAdded){finalTxt+=' '+seg;vqLastAdded=seg;}
+      } else interim+=e.results[i][0].transcript;
     }
     vqText=(finalTxt+' '+interim).trim();
     document.getElementById('vqResult').textContent=vqText;

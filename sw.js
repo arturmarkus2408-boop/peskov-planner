@@ -60,7 +60,6 @@ self.addEventListener('notificationclick', e => {
   }
 });
 
-// Periodic check (если поддерживается)
 self.addEventListener('periodicsync', e => {
   if (e.tag === 'check-reminders') {
     e.waitUntil(clients.matchAll().then(cls => {

@@ -10,6 +10,7 @@
 <title>PESKOV Smart Planner</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 <style>
 :root{--bg:#0f172a;--bg2:#1e293b;--bg3:#0d1117;--acc:#3d4fd4;--acc2:#5c6bc0;--txt:#f1f5f9;--txt2:#94a3b8;--txt3:#64748b;--brd:#1e2d45;--red:#ef4444;--grn:#10b981;--ylw:#f59e0b;--ora:#ff6b35;--r:12px}
 [data-theme="light"]{--bg:#e8f0fe;--bg2:#ffffff;--bg3:#dbe8fb;--acc:#3d4fd4;--acc2:#5c6bc0;--txt:#1e293b;--txt2:#334155;--txt3:#64748b;--brd:#c5d4f0}
@@ -65,7 +66,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--txt);font
 .fab{position:fixed;bottom:calc(62px + env(safe-area-inset-bottom) + 10px);right:18px;width:52px;height:52px;border-radius:50%;background:var(--acc);color:#fff;font-size:24px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.3);z-index:200;transition:transform .15s}
 .fab:active{transform:scale(.93)}
 /* TASK CARD */
-.task-card{background:var(--bg2);border-radius:var(--r);padding:11px 12px;margin-bottom:7px;border-left:3px solid var(--acc);position:relative}
+.task-card{background:var(--bg2);border-radius:var(--r);padding:11px 12px;margin-bottom:7px;border-left:3px solid var(--acc);position:relative;cursor:pointer;transition:opacity .15s}.task-card:active{opacity:.85}
 .task-card.prio-urgent{border-color:var(--red)}
 .task-card.prio-medium{border-color:var(--ylw)}
 .task-card.prio-low{border-color:var(--acc)}
@@ -194,6 +195,13 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--txt);font
 .attach-size{font-size:10px;color:var(--txt3)}
 .attach-del{background:none;border:none;color:var(--txt3);cursor:pointer;font-size:16px;padding:2px 5px;flex-shrink:0}
 .attach-del:hover{color:var(--red)}
+.link-chip{display:flex;align-items:center;gap:8px;background:var(--bg3);border-radius:8px;padding:7px 10px;}
+.link-url{font-size:11px;color:var(--acc);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-decoration:none;}
+.link-url:hover{text-decoration:underline;}
+.link-add-row{display:flex;gap:6px;margin-bottom:6px;}
+.link-add-input{flex:1;background:var(--bg3);border:1px solid var(--brd);border-radius:9px;padding:8px 10px;color:var(--txt);font-size:12px;outline:none;font-family:inherit;}
+.link-add-input:focus{border-color:var(--acc);}
+.link-add-btn{padding:8px 14px;border-radius:9px;background:rgba(61,79,212,.15);color:var(--acc);border:1px solid rgba(61,79,212,.3);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;}
 /* TAG MANAGER */
 .tag-list{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
 .tag-item{display:flex;align-items:center;gap:9px;background:var(--bg2);border-radius:10px;padding:9px 12px}
@@ -394,6 +402,10 @@ select.fi{cursor:pointer;appearance:none;-webkit-appearance:none}
     </div>
     <div>
       <div class="fl" id="lNoteAttach" style="margin-bottom:6px">Вложения</div>
+      <div class="link-add-row">
+        <input class="link-add-input" id="noteLinkInput" placeholder="🔗 https://... (ссылка)">
+        <button class="link-add-btn" onclick="addNoteLink()">+ Добавить</button>
+      </div>
       <label class="attach-area" id="noteAttachArea">
         📎 Прикрепить файлы (фото, документы, аудио...)
         <input type="file" id="noteFileInput" style="display:none" onchange="addNoteAttachment(this)" multiple>
@@ -439,6 +451,17 @@ select.fi{cursor:pointer;appearance:none;-webkit-appearance:none}
     <button class="vbtn vbtn-cancel" onclick="closeOv('voiceOv')">Отмена</button>
   </div>
 </div></div>
+<!-- SYNC PASSWORD MODAL -->
+<div class="ov" id="syncPwdOv" style="align-items:center">
+<div class="alert-mdl">
+  <div class="alert-t" id="syncPwdTitle">🔐 Пароль синхронизации</div>
+  <div class="alert-sub" id="syncPwdSub">Установите пароль для защиты данных</div>
+  <div class="fg" style="margin-bottom:10px"><input class="fi" id="syncPwdInput" type="password" placeholder="Пароль..." style="width:100%;padding:10px 12px;margin:0"></div>
+  <div class="alert-btns">
+    <button class="alert-btn alert-btn-snz" onclick="closeOv('syncPwdOv')">Отмена</button>
+    <button class="alert-btn alert-btn-ok" onclick="confirmSyncPassword()">✓ ОК</button>
+  </div>
+</div></div>
 <!-- HELP MODAL -->
 <div class="ov" id="helpOv" style="align-items:flex-start;overflow-y:auto">
 <div class="mdl" style="border-radius:20px 20px 0 0;max-height:95vh;overflow-y:auto">
@@ -468,8 +491,8 @@ const LANG={
     DN:['Пн','Вт','Ср','Чт','Пт','Сб','Вс'],
     today:'Сегодня',tomorrow:'Завтра',
     total:'Всего',doneS:'Выполнено',inWorkS:'В работе',urgentS:'Срочных',
-    checkOverdue:'Проверить невыполненные',expCal:'Экспорт в Google Calendar (.ics)',
-    expJSON:'Экспорт JSON',expCSV:'Экспорт CSV',clearDone:'Очистить выполненные',help:'Инструкция',
+    checkOverdue:'Проверить невыполненные',
+    clearDone:'Очистить выполненные',help:'Инструкция',
     notifHint:'Нажмите чтобы включить уведомления — нужно для будильника и напоминаний',
     notifInfo:'<b>О напоминаниях:</b><br>Уведомления работают пока Chrome запущен. Для надёжных — не закрывайте браузер.',
     recWidget:'Диктофон (запись встречи)',
@@ -495,7 +518,7 @@ const LANG={
     today:'Today',tomorrow:'Tomorrow',
     total:'Total',doneS:'Done',inWorkS:'In progress',urgentS:'Urgent',
     checkOverdue:'Check overdue',expCal:'Export to Google Calendar (.ics)',
-    expJSON:'Export JSON',expCSV:'Export CSV',clearDone:'Clear done',help:'Guide',
+    clearDone:'Clear done',help:'Guide',
     notifHint:'Tap to enable notifications for alarms and reminders',
     notifInfo:'<b>About reminders:</b><br>Notifications work while Chrome is open.',
     recWidget:'Recorder (meeting recording)',
@@ -521,7 +544,7 @@ const LANG={
     today:'Bugun',tomorrow:'Ertaga',
     total:'Jami',doneS:'Bajarildi',inWorkS:'Jarayonda',urgentS:'Shoshilinch',
     checkOverdue:'Bajarilmaganlarni tekshirish',expCal:'Google Calendarga eksport (.ics)',
-    expJSON:'JSON eksport',expCSV:'CSV eksport',clearDone:'Bajarilganlarni tozalash',help:'Qollanma',
+    clearDone:'Bajarilganlarni tozalash',help:'Qollanma',
     notifHint:'Bildirishnomalarni yoqish uchun bosing',
     notifInfo:'<b>Eslatmalar:</b><br>Chrome ochiq bolganda ishlaydi.',
     recWidget:'Diktofon (uchrashuv yozuvi)',
@@ -788,9 +811,9 @@ function taskCard(tk){
   const subHtml=subTotal>0?`<div class="tc-subtasks-bar">
     <div class="sub-progress-wrap"><div class="sub-progress-fill" style="width:${subPct}%"></div></div>
     <div class="sub-progress-text">${subDone}/${subTotal} ${t('subtasks').toLowerCase()}</div></div>`:'';
-  return`<div class="task-card prio-${tk.priority}${isDone?' done-card':''}">
+  return`<div class="task-card prio-${tk.priority}${isDone?' done-card':''}" onclick="openEdit('${tk.id}')">
     <div class="tc-row">
-      <div class="tc-check${isDone?' done-check':''}" onclick="toggleTask('${tk.id}')">${isDone?'✓':''}</div>
+      <div class="tc-check${isDone?' done-check':''}" onclick="event.stopPropagation();toggleTask('${tk.id}')">${isDone?'✓':''}</div>
       <div class="tc-body">
         <div class="tc-name${isDone?' crossed':''}">${escHtml(tk.name)}</div>
         <div class="tc-meta">
@@ -801,8 +824,7 @@ function taskCard(tk){
         ${subHtml}
       </div>
     </div>
-    <div class="tc-actions">
-      <button class="tc-btn tc-btn-edit" onclick="openEdit('${tk.id}')">✏️ ${lang==='en'?'Edit':'Изм.'}</button>
+    <div class="tc-actions" onclick="event.stopPropagation()">
       ${!isDone?`<button class="tc-btn tc-btn-focus" onclick="startFocus('${tk.id}')">⏱ Фокус</button>`:''}
     </div>
   </div>`;
@@ -910,9 +932,7 @@ function renderSets(){
     <div style="background:var(--bg2);border-radius:var(--r);overflow:hidden;margin-bottom:10px">
       <div class="srow" onclick="checkOverdue()"><span class="srow-ico">⚠️</span><span class="srow-lbl">${t('checkOverdue')}</span><span>›</span></div>
       <div class="srow" onclick="setTab(3);setTimeout(()=>openTagEditor(),100)"><span class="srow-ico">🏷</span><span class="srow-lbl">${t('tagsSettings')}</span><span>›</span></div>
-      <div class="srow" onclick="exportICS()"><span class="srow-ico">📆</span><span class="srow-lbl">${t('expCal')}</span><span>›</span></div>
-      <div class="srow" onclick="exportJSON()"><span class="srow-ico">📤</span><span class="srow-lbl">${t('expJSON')}</span><span>›</span></div>
-      <div class="srow" onclick="exportCSV()"><span class="srow-ico">📋</span><span class="srow-lbl">${t('expCSV')}</span><span>›</span></div>
+
       <div class="srow" onclick="clearDone()"><span class="srow-ico">🗑</span><span class="srow-lbl">${t('clearDone')}</span><span>›</span></div>
       <div class="srow" onclick="openHelp()"><span class="srow-ico">📖</span><span class="srow-lbl">${t('help')}</span><span>›</span></div>
     </div>
@@ -1297,15 +1317,35 @@ async function addNoteAttachment(input){
   renderNoteAttachList();
 }
 function removeNoteAttachment(id){idbDel(id);noteEditAttachments=noteEditAttachments.filter(a=>a.id!==id);renderNoteAttachList();}
+// NOTE LINKS
+function addNoteLink(){
+  const inp=document.getElementById('noteLinkInput');
+  if(!inp)return;
+  let url=inp.value.trim();
+  if(!url)return;
+  if(!/^https?:\/\//i.test(url))url='https://'+url;
+  const title=url.replace(/^https?:\/\//,'').replace(/\/.*$/,'').replace(/^www\./,'');
+  noteEditAttachments.push({id:uid(),type:'link',name:title,url,size:0,created:new Date().toISOString()});
+  inp.value='';
+  renderNoteAttachList();
+  showToast('🔗 Ссылка добавлена');
+}
 async function renderNoteAttachList(){
   const el=document.getElementById('noteAttachList');if(!el)return;
   const items=await Promise.all(noteEditAttachments.map(async a=>{
+    if(a.type==='link'){
+      return`<div class="link-chip">
+        <span class="attach-ico">🔗</span>
+        <a class="link-url" href="${escHtml(a.url)}" target="_blank" rel="noopener">${escHtml(a.name)}</a>
+        <button class="attach-del" onclick="removeNoteAttachment('${a.id}')">✕</button>
+      </div>`;
+    }
     const blob=await idbGet(a.id).catch(()=>null);
     const url=blob?URL.createObjectURL(blob):'';
     return`<div class="attach-item">
       <span class="attach-ico">${fileIcon(a.type)}</span>
-      <div class="attach-info"><div class="attach-name">${escHtml(a.name)}</div><div class="attach-size">${fmtSize(a.size)}</div></div>
-      ${url?`<a href="${url}" download="${escHtml(a.name).replace(/"/g,"&quot;")}" class="attach-del" style="color:var(--acc);font-size:18px;text-decoration:none" title="Скачать">↓</a>`:''}
+      <div class="attach-info"><div class="attach-name">${escHtml(a.name)}</div><div class="attach-size">${a.type==='link'?'🔗':fmtSize(a.size)}</div></div>
+      ${url?`<a href="${url}" download="${escHtml(a.name).replace(/"/g,'&quot;')}" class="attach-del" style="color:var(--acc);font-size:18px;text-decoration:none" title="Скачать">↓</a>`:''}
       <button class="attach-del" onclick="removeNoteAttachment('${a.id}')">✕</button>
     </div>`;
   }));
@@ -1316,49 +1356,132 @@ function toggleNoteVoice(){if(noteRecOn)stopNoteVoice();else startNoteVoice();}
 function startNoteVoice(){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(!SR){showToast('⚠️ Speech API не поддерживается');return;}
-  if(noteSpeech)try{noteSpeech.abort();}catch(e){}
+  stopNoteVoice();
+  const ta=document.getElementById('nText');
+  let baseText=(ta?ta.value:'').trim();
   noteSpeech=new SR();
   noteSpeech.lang=lang==='uz'?'uz-UZ':lang==='en'?'en-US':'ru-RU';
   noteSpeech.continuous=true;
-  noteSpeech.interimResults=true;
-  let finalBase=(document.getElementById('nText')||{value:''}).value;
-  let lastFinalIdx=0;
+  noteSpeech.interimResults=false;
+  noteSpeech.maxAlternatives=1;
   noteSpeech.onresult=e=>{
-    let interim='';
-    for(let i=lastFinalIdx;i<e.results.length;i++){
-      if(e.results[i].isFinal){
-        const txt=e.results[i][0].transcript.trim();
-        if(txt){finalBase=(finalBase+(finalBase?'\n':'')+formatNoteTranscript(txt)).trim();}
-        lastFinalIdx=i+1;
-      } else {
-        interim+=e.results[i][0].transcript;
-      }
+    for(let i=e.resultIndex;i<e.results.length;i++){
+      if(!e.results[i].isFinal)continue;
+      const raw=e.results[i][0].transcript.trim();
+      if(!raw)continue;
+      const converted=convertNumberWords(raw);
+      const formatted=formatNoteTranscript(converted);
+      baseText=(baseText+(baseText?'\n':'')+formatted).trim();
+      if(ta)ta.value=baseText;
     }
-    const ta=document.getElementById('nText');
-    if(ta)ta.value=finalBase+(interim?' ['+interim+']':'');
-    const vs=document.getElementById('noteVoiceStatus');
-    if(vs)vs.textContent=interim?'🔴 '+interim:'';
   };
-  noteSpeech.onerror=e=>{if(e.error!=='no-speech')stopNoteVoice();};
+  noteSpeech.onerror=e=>{
+    if(e.error!=='no-speech'&&e.error!=='aborted')stopNoteVoice();
+  };
   noteSpeech.onend=()=>{
-    if(noteRecOn){
-      // Restore clean text before restart
-      const ta=document.getElementById('nText');if(ta)ta.value=finalBase;
-      try{noteSpeech.start();}catch(e){}
-    }
+    if(noteRecOn&&noteSpeech)try{noteSpeech.start();}catch(ex){}
   };
-  noteSpeech.start();noteRecOn=true;
-  const vb=document.getElementById('noteVoiceBtn');if(vb){vb.textContent=t('voiceOff');vb.classList.add('on');}
+  noteRecOn=true;
+  try{noteSpeech.start();}catch(e){showToast('⚠️ Ошибка запуска');return;}
+  const vb=document.getElementById('noteVoiceBtn');
+  if(vb){vb.textContent=t('voiceOff');vb.classList.add('on');}
+  const vs=document.getElementById('noteVoiceStatus');
+  if(vs)vs.textContent='🔴 Слушаю...';
 }
 function stopNoteVoice(){
   if(noteSpeech)try{noteSpeech.stop();}catch(e){}
   noteSpeech=null;noteRecOn=false;
   const vb=document.getElementById('noteVoiceBtn');if(vb){vb.textContent=t('voiceOn');vb.classList.remove('on');}
   const vs=document.getElementById('noteVoiceStatus');if(vs)vs.textContent='';
-  // Clean up interim brackets
-  const ta=document.getElementById('nText');
-  if(ta)ta.value=ta.value.replace(/\s*\[[^\]]*\]\s*$/,'').trim();
 }
+
+// Конвертация числительных слов в цифры (русский, english, uzbek)
+function convertNumberWords(text){
+  const RU_NUMS={
+    'ноль':0,'нуль':0,'нулю':0,'нули':0,
+    'один':1,'одна':1,'одно':1,'одного':1,'одному':1,'одним':1,'одной':1,
+    'два':2,'две':2,'двух':2,'двум':2,'двумя':2,
+    'три':3,'трёх':3,'трех':3,'трём':3,'трем':3,'тремя':3,
+    'четыре':4,'четырёх':4,'четырех':4,'четырём':4,'четырем':4,
+    'пять':5,'пяти':5,'пятью':5,
+    'шесть':6,'шести':6,'шестью':6,
+    'семь':7,'семи':7,'семью':7,
+    'восемь':8,'восьми':8,'восемью':8,
+    'девять':9,'девяти':9,'девятью':9,
+    'десять':10,'десяти':10,'десятью':10,
+    'одиннадцать':11,'одиннадцати':11,
+    'двенадцать':12,'двенадцати':12,
+    'тринадцать':13,'тринадцати':13,
+    'четырнадцать':14,'четырнадцати':14,
+    'пятнадцать':15,'пятнадцати':15,
+    'шестнадцать':16,'шестнадцати':16,
+    'семнадцать':17,'семнадцати':17,
+    'восемнадцать':18,'восемнадцати':18,
+    'девятнадцать':19,'девятнадцати':19,
+    'двадцать':20,'двадцати':20,'двадцатью':20,
+    'тридцать':30,'тридцати':30,'тридцатью':30,
+    'сорок':40,'сорока':40,
+    'пятьдесят':50,'пятидесяти':50,
+    'шестьдесят':60,'шестидесяти':60,
+    'семьдесят':70,'семидесяти':70,
+    'восемьдесят':80,'восьмидесяти':80,
+    'девяносто':90,'девяноста':90,
+    'сто':100,'ста':100,'стом':100,
+    'двести':200,'двухсот':200,'двумстам':200,
+    'триста':300,'трёхсот':300,'трехсот':300,
+    'четыреста':400,'четырёхсот':400,
+    'пятьсот':500,'пятисот':500,
+    'шестьсот':600,'шестисот':600,
+    'семьсот':700,'семисот':700,
+    'восемьсот':800,'восьмисот':800,
+    'девятьсот':900,'девятисот':900,
+    'тысяча':1000,'тысячи':1000,'тысяч':1000,'тысячу':1000,
+    'миллион':1000000,'миллиона':1000000,'миллионов':1000000,
+    'миллиард':1000000000,'миллиарда':1000000000
+  };
+  const EN_NUMS={
+    'zero':0,'one':1,'two':2,'three':3,'four':4,'five':5,
+    'six':6,'seven':7,'eight':8,'nine':9,'ten':10,
+    'eleven':11,'twelve':12,'thirteen':13,'fourteen':14,'fifteen':15,
+    'sixteen':16,'seventeen':17,'eighteen':18,'nineteen':19,
+    'twenty':20,'thirty':30,'forty':40,'fifty':50,
+    'sixty':60,'seventy':70,'eighty':80,'ninety':90,
+    'hundred':100,'thousand':1000,'million':1000000
+  };
+  const UZ_NUMS={
+    'nol':0,'bir':1,'ikki':2,'uch':3,'tort':4,'besh':5,
+    'olti':6,'yetti':7,'sakkiz':8,'toqqiz':9,'on':10,
+    'oʻn':10,'yigirma':20,'oʻttiz':30,'qirq':40,'ellik':50,
+    'oltmish':60,'yetmish':70,'sakson':80,'toʻqson':90,
+    'yuz':100,'ming':1000,'million':1000000
+  };
+  const numMap=lang==='en'?EN_NUMS:lang==='uz'?UZ_NUMS:RU_NUMS;
+  const words=text.split(/\s+/);
+  const out=[];
+  let acc=null;let lastWasNum=false;
+  for(let i=0;i<words.length;i++){
+    const w=words[i];
+    const wl=w.toLowerCase().replace(/[,.:;!?—–-]$/,'');
+    if(numMap[wl]!==undefined){
+      const v=numMap[wl];
+      if(acc===null){acc=v;}
+      else{
+        // composing: twenty+one=21, hundred*2+30=230 etc.
+        if(v>=1000&&acc>0){acc=acc*v;}
+        else if(v===100&&acc>0&&acc<10){acc=acc*100;}
+        else if(v<acc%100||v>=100){acc=acc+v;}
+        else{acc=acc+v;}
+      }
+      lastWasNum=true;
+    } else {
+      if(lastWasNum&&acc!==null){out.push(String(acc));acc=null;}
+      out.push(w);lastWasNum=false;
+    }
+  }
+  if(acc!==null)out.push(String(acc));
+  return out.join(' ');
+}
+
 function formatNoteTranscript(text){
   const maps={
     ru:{1:['\u043f\u0435\u0440\u0432\u043e\u0435','\u043f\u0435\u0440\u0432\u044b\u0439','\u043f\u0435\u0440\u0432\u0430\u044f'],2:['\u0432\u0442\u043e\u0440\u043e\u0435','\u0432\u0442\u043e\u0440\u043e\u0439'],3:['\u0442\u0440\u0435\u0442\u044c\u0435','\u0442\u0440\u0435\u0442\u0438\u0439'],4:['\u0447\u0435\u0442\u0432\u0435\u0440\u0442\u043e\u0435','\u0447\u0435\u0442\u0432\u0435\u0440\u0442\u044b\u0439'],5:['\u043f\u044f\u0442\u043e\u0435','\u043f\u044f\u0442\u044b\u0439']},
@@ -1442,6 +1565,62 @@ function dictSaveNote(){
 }
 
 
+// ===== SYNC PASSWORD =====
+let syncPwd = null;
+let syncPwdMode = 'setup'; // 'setup', 'verify'
+let syncPwdCallback = null;
+
+function showSyncPasswordModal(mode, callback){
+  syncPwdMode = mode;
+  syncPwdCallback = callback;
+  const el = document.getElementById('syncPwdOv');
+  if(!el)return;
+  const title = document.getElementById('syncPwdTitle');
+  const sub = document.getElementById('syncPwdSub');
+  const input = document.getElementById('syncPwdInput');
+  
+  if(mode === 'setup'){
+    if(title)title.textContent = '🔐 Установите пароль';
+    if(sub)sub.textContent = 'Пароль будет защищать ваши данные в облаке';
+  } else {
+    if(title)title.textContent = '🔐 Введите пароль';
+    if(sub)sub.textContent = 'Требуется пароль для доступа к облаку';
+  }
+  if(input)input.value = '';
+  if(input)input.focus();
+  el.classList.add('open');
+}
+
+function confirmSyncPassword(){
+  const pwd = document.getElementById('syncPwdInput').value;
+  if(!pwd){showToast('⚠️ Введите пароль');return;}
+  syncPwd = pwd;
+  closeOv('syncPwdOv');
+  if(syncPwdCallback)syncPwdCallback(pwd);
+}
+
+function encryptSync(data, pwd){
+  const salt = CryptoJS.lib.WordArray.random(16);
+  const key = CryptoJS.PBKDF2(pwd, salt, {keySize: 8, iterations: 1000});
+  const iv = CryptoJS.lib.WordArray.random(16);
+  const encrypted = CryptoJS.AES.encrypt(JSON.stringify(data), key, {iv});
+  const result = salt.toString() + iv.toString() + encrypted.toString();
+  return result;
+}
+
+function decryptSync(encrypted, pwd){
+  try{
+    const salt = CryptoJS.enc.Hex.parse(encrypted.slice(0, 32));
+    const iv = CryptoJS.enc.Hex.parse(encrypted.slice(32, 64));
+    const data = encrypted.slice(64);
+    const key = CryptoJS.PBKDF2(pwd, salt, {keySize: 8, iterations: 1000});
+    const decrypted = CryptoJS.AES.decrypt(data, key, {iv});
+    return JSON.parse(decrypted.toString(CryptoJS.enc.Utf8));
+  }catch(e){
+    showToast('⚠️ Неверный пароль');
+    return null;
+  }
+}
 // ===== CLOUD SYNC (JSONBin.io) =====
 const JBIN='https://api.jsonbin.io/v3/b';
 function syncPayload(){
@@ -1449,11 +1628,19 @@ function syncPayload(){
 }
 async function pushSync(){
   const sid=localStorage.getItem('pp_sync_id');
+  if(!syncPwd&&sid){showSyncPasswordModal('verify',doPushSync);return;}
+  if(!syncPwd){showSyncPasswordModal('setup',doPushSync);return;}
+  doPushSync(syncPwd);
+}
+async function doPushSync(pwd){
+  const sid=localStorage.getItem('pp_sync_id');
+  const payload=syncPayload();
+  const encrypted=encryptSync(payload,pwd);
   showToast('📤 Отправка...');
   try{
     let res;
-    if(sid){res=await fetch(JBIN+'/'+sid,{method:'PUT',headers:{'Content-Type':'application/json','X-Bin-Versioning':'false'},body:JSON.stringify(syncPayload())});}
-    else{res=await fetch(JBIN,{method:'POST',headers:{'Content-Type':'application/json','X-Bin-Name':'peskov-planner','X-Bin-Private':'false'},body:JSON.stringify(syncPayload())});}
+    if(sid){res=await fetch(JBIN+'/'+sid,{method:'PUT',headers:{'Content-Type':'text/plain','X-Bin-Versioning':'false'},body:encrypted});}
+    else{res=await fetch(JBIN,{method:'POST',headers:{'Content-Type':'text/plain','X-Bin-Name':'peskov-planner','X-Bin-Private':'false'},body:encrypted});}
     if(res.ok){
       if(!sid){const d=await res.json();localStorage.setItem('pp_sync_id',d.metadata.id);}
       localStorage.setItem('pp_sync_ts',new Date().toISOString());
@@ -1464,11 +1651,18 @@ async function pushSync(){
 async function pullSync(){
   const sid=localStorage.getItem('pp_sync_id');
   if(!sid){showToast('⚠️ Сначала введите Sync ID');return;}
+  if(!syncPwd){showSyncPasswordModal('verify',doPullSync);return;}
+  doPullSync(syncPwd);
+}
+async function doPullSync(pwd){
+  const sid=localStorage.getItem('pp_sync_id');
   showToast('📥 Загрузка...');
   try{
     const res=await fetch(JBIN+'/'+sid+'/latest');
     if(!res.ok){showToast('⚠️ Не найдено: '+res.status);return;}
-    const d=(await res.json()).record;
+    const encrypted=await res.text();
+    const d=decryptSync(encrypted,pwd);
+    if(!d)return;
     if(d.tasks)tasks=d.tasks;if(d.notes)notes=d.notes;if(d.tags)tags=d.tags;
     save();saveNotes();saveTags();
     localStorage.setItem('pp_sync_ts',new Date().toISOString());
@@ -1477,10 +1671,15 @@ async function pullSync(){
 }
 function connectSyncId(){
   const v=prompt('Введите Sync ID:');
-  if(v&&v.trim()){localStorage.setItem('pp_sync_id',v.trim());renderSets();showToast('Sync ID сохранён');}
+  if(v&&v.trim()){
+    localStorage.setItem('pp_sync_id',v.trim());
+    syncPwd=null;localStorage.removeItem('pp_sync_pwd');
+    renderSets();
+    showSyncPasswordModal('verify',pwd=>{syncPwd=pwd;localStorage.setItem('pp_sync_pwd_hint','saved')});
+  }
 }
 function clearSyncId(){
-  if(confirm('Отвязаться от облака?')){localStorage.removeItem('pp_sync_id');localStorage.removeItem('pp_sync_ts');renderSets();}
+  if(confirm('Отвязаться от облака?')){localStorage.removeItem('pp_sync_id');localStorage.removeItem('pp_sync_ts');syncPwd=null;renderSets();}
 }
 function copySyncId(){
   const id=localStorage.getItem('pp_sync_id');if(!id)return;
@@ -1637,29 +1836,6 @@ function closeOv(id){
   if(id==='noteOv')stopNoteVoice();
 }
 
-// ===== EXPORT =====
-function exportJSON(){
-  const blob=new Blob([JSON.stringify({tasks,notes,tags},null,2)],{type:'application/json'});
-  dl(blob,'peskov-backup-'+today()+'.json');
-}
-function exportCSV(){
-  const rows=[['ID','Название','Дата','Время','Приоритет','Теги','Выполнено','Создано']];
-  tasks.forEach(tk=>{
-    const tagNames=(tk.tags||[]).map(id=>(tags.find(tg=>tg.id===id)||{name:id}).name).join(';');
-    rows.push([tk.id,tk.name,tk.date,tk.timeStart||'',tk.priority,tagNames,tk.done?'Да':'Нет',tk.created||'']);
-  });
-  const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
-  dl(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'}),'peskov-tasks-'+today()+'.csv');
-}
-function exportICS(){
-  let ics='BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//PESKOV Planner//v5//RU\n';
-  tasks.filter(tk=>!tk.done).forEach(tk=>{
-    const dt=tk.date.replace(/-/g,'');
-    ics+=`BEGIN:VEVENT\nUID:${tk.id}@peskov\nSUMMARY:${tk.name}\nDTSTART;VALUE=DATE:${dt}\nDTEND;VALUE=DATE:${dt}\nDESCRIPTION:Приоритет: ${tk.priority}\nEND:VEVENT\n`;
-  });
-  ics+='END:VCALENDAR';
-  dl(new Blob([ics],{type:'text/calendar'}),'peskov-'+today()+'.ics');
-}
 function clearDone(){
   tasks=tasks.filter(tk=>!tk.done);save();renderAll();renderDstrip();saveStats();showToast(t('deleted'));
 }

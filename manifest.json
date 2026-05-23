@@ -1,14 +1,14 @@
 {
   "name": "PESKOV Smart Planner",
-  "short_name": "Планировщик",
-  "description": "Умный планировщик задач с голосовым вводом",
-  "start_url": "/peskov-planner/",
-  "scope": "/peskov-planner/",
+  "short_name": "PESKOV",
+  "description": "Ваш персональный цифровой помощник: задачи, заметки, диктофон, фокус-таймер. Работает офлайн.",
+  "start_url": "/",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#0f172a",
   "theme_color": "#3d4fd4",
-  "orientation": "portrait-primary",
   "lang": "ru",
+  "scope": "/",
   "icons": [
     {
       "src": "icon-192.png",
@@ -21,6 +21,20 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Новая задача",
+      "short_name": "Задача",
+      "url": "/?action=new",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Заметки",
+      "short_name": "Заметки",
+      "url": "/?tab=3",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
     }
   ]
 }

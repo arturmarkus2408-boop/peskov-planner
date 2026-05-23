@@ -248,6 +248,32 @@ select.fi{cursor:pointer;appearance:none;-webkit-appearance:none}
 .btn-p:active{opacity:.85}
 .btn-d{width:100%;padding:11px;border-radius:12px;background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.25);font-size:13px;font-weight:600;cursor:pointer;margin-top:6px}
 .btn-d:active{opacity:.8}
+.voice-fab{position:fixed;bottom:calc(62px + env(safe-area-inset-bottom) + 10px);right:80px;width:46px;height:46px;border-radius:50%;background:var(--bg2);color:var(--acc);font-size:18px;border:1.5px solid var(--acc);cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 12px rgba(0,0,0,.25);z-index:200;transition:all .15s}
+.voice-fab:active{transform:scale(.93)}
+.voice-fab.listening{background:var(--red);color:#fff;border-color:var(--red);animation:vpulse 1s infinite}
+@keyframes vpulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.6)}50%{box-shadow:0 0 0 12px rgba(239,68,68,0)}}
+.attach-preview{margin-top:6px;border-radius:8px;overflow:hidden;background:var(--bg3);position:relative}
+.attach-preview img{width:100%;display:block;cursor:pointer;max-height:200px;object-fit:cover}
+.attach-preview-pdf{padding:14px;display:flex;align-items:center;gap:10px;cursor:pointer}
+.attach-preview-pdf:hover{background:var(--bg2)}
+.preview-mdl{display:none;position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:1000;align-items:center;justify-content:center}
+.preview-mdl.open{display:flex}
+.preview-close{position:absolute;top:12px;right:12px;background:rgba(0,0,0,.6);color:#fff;border:none;font-size:24px;width:40px;height:40px;border-radius:50%;cursor:pointer;z-index:1001}
+.preview-content{max-width:95vw;max-height:95vh;border-radius:8px}
+.preview-content img{max-width:95vw;max-height:95vh;display:block}
+.preview-content iframe{width:95vw;height:90vh;border:none;background:#fff;border-radius:8px}
+.preview-content audio{width:90vw;max-width:500px}
+.preview-content video{max-width:95vw;max-height:95vh}
+.voice-quick-mdl{background:var(--bg2);border-radius:20px 20px 0 0;padding:24px 18px 32px;width:100%;text-align:center}
+.vq-pulse{width:80px;height:80px;border-radius:50%;background:rgba(239,68,68,.15);border:3px solid var(--red);display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 14px;animation:vpulse 1s infinite}
+.vq-hint{font-size:11px;color:var(--txt3);margin-bottom:10px;line-height:1.5}
+.vq-result{background:var(--bg3);border-radius:10px;padding:10px 12px;margin-bottom:12px;min-height:40px;font-size:13px;line-height:1.5;text-align:left}
+.vq-parsed{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:12px;text-align:left;display:none}
+.vq-parsed.show{display:block}
+.vq-parsed-row{display:flex;justify-content:space-between;padding:3px 0;color:var(--txt2)}
+.vq-parsed-label{color:var(--txt3);font-size:11px}
+.vq-parsed-val{color:var(--grn);font-weight:600;font-size:12px}
+
 /* TOAST */
 .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--bg2);border:1px solid var(--brd);color:var(--txt);padding:10px 18px;border-radius:24px;font-size:13px;font-weight:500;z-index:9999;opacity:0;transition:all .25s;white-space:nowrap;max-width:90vw}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -314,9 +340,9 @@ select.fi{cursor:pointer;appearance:none;-webkit-appearance:none}
     <div class="theme-wrap" id="themeWrap">
       <button class="theme-btn" id="themeBtn" onclick="toggleThemeDrop()"><span id="themeBtnLabel">Тема</span></button>
       <div class="theme-drop" id="themeDrop">
-        <div class="theme-opt" id="topt_dark" onclick="setTheme('dark');toggleThemeDrop()"><span class="theme-dot" style="background:#3d4fd4"></span>Тёмная</div>
-        <div class="theme-opt" id="topt_light" onclick="setTheme('light');toggleThemeDrop()"><span class="theme-dot" style="background:#3d4fd4;border:1px solid #c5d4f0"></span>Светлая</div>
-        <div class="theme-opt" id="topt_emerald" onclick="setTheme('emerald');toggleThemeDrop()"><span class="theme-dot" style="background:#10b981"></span>Изумрудная</div>
+        <div class="theme-opt" id="topt_dark" onclick="setTheme('dark');toggleThemeDrop()"><span class="theme-dot" style="background:#3d4fd4"></span><span id="topt_dark_lbl">Тёмная</span></div>
+        <div class="theme-opt" id="topt_light" onclick="setTheme('light');toggleThemeDrop()"><span class="theme-dot" style="background:#3d4fd4;border:1px solid #c5d4f0"></span><span id="topt_light_lbl">Светлая</span></div>
+        <div class="theme-opt" id="topt_emerald" onclick="setTheme('emerald');toggleThemeDrop()"><span class="theme-dot" style="background:#10b981"></span><span id="topt_emerald_lbl">Изумрудная</span></div>
       </div>
     </div>
     <div class="lang-bar">
@@ -349,6 +375,26 @@ select.fi{cursor:pointer;appearance:none;-webkit-appearance:none}
 </nav>
 <!-- FAB -->
 <button class="fab" id="mainFab" onclick="openFab()">+</button>
+<button class="voice-fab" id="voiceFab" onclick="openVoiceQuickAdd()" title="Голосовой ввод">🎙</button>
+<!-- PREVIEW OVERLAY -->
+<div class="preview-mdl" id="previewOv" onclick="if(event.target===this)closePreview()">
+  <button class="preview-close" onclick="closePreview()">✕</button>
+  <div class="preview-content" id="previewContent"></div>
+</div>
+<!-- VOICE QUICK ADD -->
+<div class="ov" id="voiceQuickOv">
+<div class="voice-quick-mdl">
+  <div class="vq-pulse">🎙</div>
+  <div id="vqStatus" style="font-size:14px;font-weight:600;margin-bottom:8px">Слушаю...</div>
+  <div class="vq-hint" id="vqHint">Скажите: "Подготовить отчёт 25 мая в 14:00, срочно, напомни 24 мая в 21:00"</div>
+  <div class="vq-result" id="vqResult"></div>
+  <div class="vq-parsed" id="vqParsed"></div>
+  <div class="voice-btns" style="display:flex;gap:7px;justify-content:center;flex-wrap:wrap">
+    <button class="vbtn vbtn-stop" onclick="vqStop()">⏹ Стоп</button>
+    <button class="vbtn vbtn-ok" id="vqOkBtn" onclick="vqApply()" style="display:none">✓ Создать</button>
+    <button class="vbtn vbtn-cancel" onclick="closeOv('voiceQuickOv')">Отмена</button>
+  </div>
+</div></div>
 <!-- ADD/EDIT TASK MODAL -->
 <div class="ov" id="addOv">
 <div class="mdl">
@@ -502,6 +548,13 @@ const LANG={
     tagsSettings:'Управление тегами',
     transcribing:'Расшифровка...',transcript:'Расшифровка',
     noSpace:'⚠️ Мало места. Удалите старые вложения или заметки.',
+    taskAdded:'Задача создана',vqListening:'🔴 Слушаю...',vqReady:'Готово',
+    vqHint:'Скажите: «Подготовить отчёт 25 мая в 14:00, срочно, напомни 24 мая в 21:00»',
+    preview:'Просмотр',lName:'Название',lDate:'Дата',lFrom:'С',lTo:'До',lPrio:'Приоритет',
+    lRemind:'Напоминание',prioUrgent:'Срочный',prioMedium:'Средний',prioLow:'Низкий',
+    themeLabel:'Тема',themeDark:'Тёмная',themeLight:'Светлая',themeEmerald:'Изумрудная',
+    inProgress:'В работе',urgent:'Срочный',cancel:'Отмена',ok:'OK',save:'Сохранить',
+    delete:'Удалить',edit:'Изменить',voice:'Голос',voiceTooltip:'Голосовой ввод',newTask:'Новая задача',myStats:'Моя статистика',recordWidget:'Диктофон',
     attach:'Вложения',attachHint:'Прикрепить файлы',
   },
   en:{
@@ -528,6 +581,13 @@ const LANG={
     tagsSettings:'Tag management',
     transcribing:'Transcribing...',transcript:'Transcript',
     noSpace:'⚠️ Storage full. Delete old attachments or notes.',
+    taskAdded:'Task created',vqListening:'🔴 Listening...',vqReady:'Ready',
+    vqHint:'Say: "Prepare report on May 25 at 14:00, urgent, remind me May 24 at 21:00"',
+    preview:'Preview',lName:'Name',lDate:'Date',lFrom:'From',lTo:'To',lPrio:'Priority',
+    lRemind:'Reminder',prioUrgent:'Urgent',prioMedium:'Medium',prioLow:'Low',
+    themeLabel:'Theme',themeDark:'Dark',themeLight:'Light',themeEmerald:'Emerald',
+    inProgress:'In progress',urgent:'Urgent',cancel:'Cancel',ok:'OK',save:'Save',
+    delete:'Delete',edit:'Edit',voice:'Voice',voiceTooltip:'Voice input',newTask:'New task',myStats:'My statistics',recordWidget:'Recorder',
     attach:'Attachments',attachHint:'Attach files',
   },
   uz:{
@@ -554,6 +614,13 @@ const LANG={
     tagsSettings:'Teglarni boshqarish',
     transcribing:'Transkripsiya...',transcript:'Transkripsiya',
     noSpace:'⚠️ Xotira yetarli emas. Eski fayllarni oching.',
+    taskAdded:'Vazifa yaratildi',vqListening:'🔴 Tinglayapman...',vqReady:'Tayyor',
+    vqHint:'Ayting: "25-may soat 14:00 da hisobotni tayyorlash, shoshilinch"',
+    preview:'Korish',lName:'Nomi',lDate:'Sana',lFrom:'Dan',lTo:'Gacha',lPrio:'Muhimligi',
+    lRemind:'Eslatma',prioUrgent:'Shoshilinch',prioMedium:'Orta',prioLow:'Past',
+    themeLabel:'Mavzu',themeDark:'Qora',themeLight:'Oq',themeEmerald:'Zumradli',
+    inProgress:'Jarayonda',urgent:'Shoshilinch',cancel:'Bekor qilish',ok:'OK',save:'Saqlash',
+    delete:'Ochirish',edit:'Tahrirlash',voice:'Ovoz',voiceTooltip:'Ovozli kiritish',newTask:'Yangi vazifa',myStats:'Statistika',recordWidget:'Diktofon',
     attach:'Ilovalar',attachHint:'Fayl biriktirish',
   }
 };
@@ -729,8 +796,8 @@ function fileIcon(type){
 function setTheme(th){
   theme=th;localStorage.setItem('pp_theme',th);
   document.documentElement.setAttribute('data-theme',th==='dark'?'':th);
-  const labels={dark:'Тёмная',light:'Светлая',emerald:'Изумрудная'};
-  const el=document.getElementById('themeBtnLabel');if(el)el.textContent=labels[th]||'Тема';
+  const labels={dark:t('themeDark'),light:t('themeLight'),emerald:t('themeEmerald')};
+  const el=document.getElementById('themeBtnLabel');if(el)el.textContent=labels[th]||t('themeLabel');
   ['dark','light','emerald'].forEach(x=>{const o=document.getElementById('topt_'+x);if(o)o.classList.toggle('on',x===th);});
 }
 function toggleThemeDrop(){
@@ -742,7 +809,11 @@ function toggleThemeDrop(){
 function setLang(l){
   lang=l;localStorage.setItem('pp_lang',l);
   ['ru','en','uz'].forEach(x=>{const b=document.getElementById('lb_'+x);if(b)b.classList.toggle('on',x===l);});
-  renderDstrip();renderAll();
+  // Re-apply theme labels
+  setTheme(theme);
+  // Update help link/title
+  ['dark','light','emerald'].forEach(x=>{const e=document.getElementById('topt_'+x+'_lbl');if(e)e.textContent=t('theme'+x.charAt(0).toUpperCase()+x.slice(1));});
+  localizeLabels();renderDstrip();renderAll();
 }
 function setTab(n){
   tab=n;
@@ -752,9 +823,12 @@ function setTab(n){
   renderAll();
 }
 function updateNav(){
+  const vf=document.getElementById('voiceFab');
+  if(vf)vf.style.display=(tab===0||tab===2||tab===3)?'flex':'none';
+
   const nl=[t('home'),t('cal'),t('all'),t('notes'),t('setts')];
   [0,1,2,3,4].forEach(i=>{const el=document.getElementById('nl'+i);if(el)el.textContent=nl[i];});
-  const fab=document.getElementById('mainFab');if(fab)fab.textContent=tab===3?'✏️':'+';
+  const fab=document.getElementById('mainFab');if(fab)fab.textContent='+';
 }
 function openFab(){if(tab===3)openNewNote();else if(tab===4)openTagEditor();else openAdd();}
 
@@ -799,7 +873,7 @@ function hexLighter(hex){
   const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
   return`rgba(${r},${g},${b},0.15)`;
 }
-function taskCard(tk){
+function taskCard(tk,showDate){
   const isDone=tk.done||tk.status==='moved';
   const rLbl={daily:'↺Ежд',weekdays:'↺Буд',weekly:'↺Нед',monthly:'↺Мес'};
   const pbc=tk.priority==='urgent'?'pb-urgent':tk.priority==='medium'?'pb-medium':'pb-low';
@@ -817,16 +891,14 @@ function taskCard(tk){
       <div class="tc-body">
         <div class="tc-name${isDone?' crossed':''}">${escHtml(tk.name)}</div>
         <div class="tc-meta">
-          ${tk.timeStart?`<span>⏰ ${tk.timeStart}${tk.timeEnd?'–'+tk.timeEnd:''}</span>`:''}${tk.recurrence?`<span class="recur-badge">${rLbl[tk.recurrence]||''}</span>`:''}
-          <span class="prio-badge ${pbc}">${pbl} ${tk.priority==='urgent'?t('urgentS'):tk.priority==='medium'?t('inWorkS'):''}</span>
+          ${tk.timeStart?`<span>⏰ ${tk.timeStart}${tk.timeEnd?'–'+tk.timeEnd:''}${showDate&&tk.date?' '+fmtShortDate(tk.date):''}</span>`:showDate&&tk.date?`<span>📅 ${fmtShortDate(tk.date)}</span>`:''}${tk.recurrence?`<span class="recur-badge">${rLbl[tk.recurrence]||''}</span>`:''}
+          <span class="prio-badge ${pbc}">${pbl} ${tk.priority==='urgent'?t('prioUrgent'):tk.priority==='medium'?t('prioMedium'):''}</span>
         </div>
         ${tagHtml?`<div class="tc-tags">${tagHtml}</div>`:''}
         ${subHtml}
       </div>
     </div>
-    <div class="tc-actions" onclick="event.stopPropagation()">
-      ${!isDone?`<button class="tc-btn tc-btn-focus" onclick="startFocus('${tk.id}')">⏱ Фокус</button>`:''}
-    </div>
+
   </div>`;
 }
 
@@ -853,6 +925,7 @@ function renderAllTasks(){
   if(searchQ)list=list.filter(tk=>tk.name.toLowerCase().includes(searchQ)||((tk.note||'').toLowerCase().includes(searchQ)));
   if(tagFilter)list=list.filter(tk=>(tk.tags||[]).includes(tagFilter));
   list.sort((a,b)=>a.date.localeCompare(b.date));
+  const tasksHtml=list.length?renderListWithDate(list):`<div class="empty"><div class="empty-ico">📋</div><div class="empty-t">${t('noTasks')}</div></div>`;
   // Build tag filter bar
   const filterBar=`<div class="tag-filter-bar">
     <button class="tfbtn${!tagFilter?' active':''}" style="${!tagFilter?'border-color:var(--acc);color:var(--acc)':''}" onclick="setTagFilter(null)">Все</button>
@@ -862,7 +935,7 @@ function renderAllTasks(){
     ${focusTaskId?renderFocusBar():''}
     <div class="search-box"><span class="search-ico">🔍</span><input placeholder="${t('search')}" value="${escHtml(searchQ)}" oninput="searchQ=this.value.toLowerCase();renderAllTasks()"></div>
     ${filterBar}
-    ${renderList(list)}`;
+    ${tasksHtml}`;
 }
 function setTagFilter(id){tagFilter=id;renderAllTasks();}
 
@@ -949,6 +1022,33 @@ function renderAll(){
 }
 
 
+function renderListWithDate(list){
+  const pend=list.filter(tk=>!tk.done&&tk.status!=='moved');
+  const dn=list.filter(tk=>tk.done||tk.status==='moved');
+  let h='';
+  if(pend.length)h+=`<div class="sec-hdr"><span class="sec-t">${t('inWork')}</span><span class="sec-c">${pend.length}</span></div>`+pend.map(tk=>taskCard(tk,true)).join('');
+  if(dn.length)h+=`<div class="sec-hdr" style="margin-top:14px"><span class="sec-t">${t('done')}</span><span class="sec-c">${dn.length}</span></div>`+dn.map(tk=>taskCard(tk,true)).join('');
+  return h;
+}
+function fmtShortDate(ds){
+  const d=new Date(ds+'T12:00:00');
+  return d.toLocaleDateString(lang==='en'?'en-GB':'ru-RU',{day:'2-digit',month:'2-digit',year:'2-digit'});
+}
+
+
+function localizeLabels(){
+  const m={lName:'Название',lDate:'Дата',lFrom:'С',lTo:'До',lPrio:'Приоритет',lRecur:'Повтор',lRemind:'Напоминание',lNote:'Заметка',lAttach:'Вложения',lTags:'Теги',lSubs:'Подзадачи',lAttachBtn:'Прикрепить файл',lNoteAttach:'Вложения'};
+  for(const k in m){const el=document.getElementById(k);if(el)el.textContent=t(k)||m[k];}
+  // Priority buttons
+  const pl=document.getElementById('pr_low');if(pl)pl.innerHTML='🟢 '+(t('prioLow')||'Низкий');
+  const pm=document.getElementById('pr_medium');if(pm)pm.innerHTML='🟡 '+(t('prioMedium')||'Средний');
+  const pu=document.getElementById('pr_urgent');if(pu)pu.innerHTML='🔴 '+(t('prioUrgent')||'Срочный');
+  // Save button
+  const sb=document.getElementById('saveBtnTask');if(sb)sb.innerHTML='💾 '+(t('save')||'Сохранить');
+  const db=document.getElementById('delBtnTask');if(db)db.innerHTML='🗑 '+(t('delete')||'Удалить');
+  const vf=document.getElementById('voiceFab');if(vf)vf.title=t('voiceTooltip')||'Голосовой ввод';
+}
+
 // ===== TASK CRUD =====
 function openAdd(){
   editId=null;editSubtasks=[];editTaskTags=[];editAttachments=[];prio='low';
@@ -959,7 +1059,7 @@ function openAdd(){
   document.getElementById('tRemind').value='';
   document.getElementById('tRecur').value='';
   document.getElementById('tNote').value='';
-  document.getElementById('addTitle').innerHTML=`Новая задача<button class="mclose" onclick="closeOv('addOv')">✕</button>`;
+  document.getElementById('addTitle').innerHTML=`${t('newTask')||(lang==='en'?'New task':lang==='uz'?'Yangi vazifa':'Новая задача')}<button class="mclose" onclick="closeOv('addOv')">✕</button>`;
   document.getElementById('delBtnTask').style.display='none';
   setPrio('low');
   renderSubtasksList();
@@ -980,7 +1080,7 @@ function openEdit(id){
   document.getElementById('tRemind').value=tk.remind||'';
   document.getElementById('tRecur').value=tk.recurrence||'';
   document.getElementById('tNote').value=tk.note||'';
-  document.getElementById('addTitle').innerHTML=`Редактировать<button class="mclose" onclick="closeOv('addOv')">✕</button>`;
+  document.getElementById('addTitle').innerHTML=`${lang==='en'?'Edit task':lang==='uz'?'Tahrirlash':'Редактировать'}<button class="mclose" onclick="closeOv('addOv')">✕</button>`;
   document.getElementById('delBtnTask').style.display='block';
   setPrio(prio);
   renderSubtasksList();
@@ -1342,11 +1442,11 @@ async function renderNoteAttachList(){
     }
     const blob=await idbGet(a.id).catch(()=>null);
     const url=blob?URL.createObjectURL(blob):'';
-    return`<div class="attach-item">
+    return`<div class="attach-item" onclick="openAttachPreview('${a.id}')" style="cursor:pointer">
       <span class="attach-ico">${fileIcon(a.type)}</span>
-      <div class="attach-info"><div class="attach-name">${escHtml(a.name)}</div><div class="attach-size">${a.type==='link'?'🔗':fmtSize(a.size)}</div></div>
-      ${url?`<a href="${url}" download="${escHtml(a.name).replace(/"/g,'&quot;')}" class="attach-del" style="color:var(--acc);font-size:18px;text-decoration:none" title="Скачать">↓</a>`:''}
-      <button class="attach-del" onclick="removeNoteAttachment('${a.id}')">✕</button>
+      <div class="attach-info"><div class="attach-name">${escHtml(a.name)}</div><div class="attach-size">${fmtSize(a.size)} • 👁 ${t('preview')}</div></div>
+      ${url?`<a href="${url}" download="${escHtml(a.name).replace(/"/g,'&quot;')}" onclick="event.stopPropagation()" class="attach-del" style="color:var(--acc);font-size:18px;text-decoration:none" title="Скачать">↓</a>`:''}
+      <button class="attach-del" onclick="event.stopPropagation();removeNoteAttachment('${a.id}')">✕</button>
     </div>`;
   }));
   el.innerHTML=items.join('');
@@ -1621,6 +1721,229 @@ function decryptSync(encrypted, pwd){
     return null;
   }
 }
+
+// ===== NLP ПАРСЕР ЗАДАЧИ ИЗ ГОЛОСА =====
+let vqRec=null,vqRecOn=false,vqText='',vqParsed=null;
+
+function openVoiceQuickAdd(){
+  vqText='';vqParsed=null;
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){showToast('⚠️ Голос не поддерживается');return;}
+  if(vqRec)try{vqRec.abort();}catch(e){}
+  vqRec=new SR();
+  vqRec.lang=lang==='uz'?'uz-UZ':lang==='en'?'en-US':'ru-RU';
+  vqRec.continuous=true;
+  vqRec.interimResults=true;
+  vqRec.maxAlternatives=1;
+  document.getElementById('vqResult').textContent='';
+  document.getElementById('vqParsed').classList.remove('show');
+  document.getElementById('vqStatus').textContent=t('vqListening');
+  document.getElementById('vqHint').textContent=t('vqHint');
+  document.getElementById('vqOkBtn').style.display='none';
+  document.getElementById('voiceQuickOv').classList.add('open');
+  vqRecOn=true;
+  let finalTxt='';
+  vqRec.onresult=e=>{
+    let interim='';
+    for(let i=e.resultIndex;i<e.results.length;i++){
+      if(e.results[i].isFinal)finalTxt+=' '+e.results[i][0].transcript.trim();
+      else interim+=e.results[i][0].transcript;
+    }
+    vqText=(finalTxt+' '+interim).trim();
+    document.getElementById('vqResult').textContent=vqText;
+    if(finalTxt.trim()){
+      vqParsed=parseVoiceTask(finalTxt);
+      showParsed(vqParsed);
+      document.getElementById('vqOkBtn').style.display='inline-block';
+    }
+  };
+  vqRec.onerror=e=>{if(e.error!=='no-speech'&&e.error!=='aborted'){document.getElementById('vqStatus').textContent='⚠️ '+e.error;}};
+  vqRec.onend=()=>{if(vqRecOn)try{vqRec.start();}catch(ex){}};
+  try{vqRec.start();}catch(e){showToast('⚠️ Микрофон занят');}
+}
+
+function vqStop(){
+  vqRecOn=false;
+  if(vqRec)try{vqRec.stop();}catch(e){}
+  document.getElementById('vqStatus').textContent=t('vqReady');
+  if(vqText){
+    vqParsed=parseVoiceTask(vqText);
+    showParsed(vqParsed);
+    document.getElementById('vqOkBtn').style.display='inline-block';
+  }
+}
+
+function vqApply(){
+  if(!vqParsed){showToast('⚠️ Нечего создавать');return;}
+  const newTask={
+    id:uid(),
+    name:vqParsed.name||vqText,
+    date:vqParsed.date||fmt(selDate),
+    timeStart:vqParsed.timeStart||null,
+    timeEnd:vqParsed.timeEnd||null,
+    priority:vqParsed.priority||'low',
+    done:false,
+    remind:vqParsed.remind||null,
+    remindDate:vqParsed.remindDate||null,
+    note:'',
+    tags:[],
+    subtasks:[],
+    attachments:[],
+    created:new Date().toISOString(),
+    updated:new Date().toISOString()
+  };
+  tasks.push(newTask);
+  save();saveStats();
+  vqStop();
+  closeOv('voiceQuickOv');
+  renderDstrip();renderAll();scheduleReminders();
+  showToast('✅ '+t('taskAdded'));
+}
+
+function showParsed(p){
+  if(!p)return;
+  const el=document.getElementById('vqParsed');
+  let html='';
+  if(p.name)html+=`<div class="vq-parsed-row"><span class="vq-parsed-label">📝 ${t('lName')}:</span><span class="vq-parsed-val">${escHtml(p.name)}</span></div>`;
+  if(p.date)html+=`<div class="vq-parsed-row"><span class="vq-parsed-label">📅 ${t('lDate')}:</span><span class="vq-parsed-val">${fmtShortDate(p.date)}</span></div>`;
+  if(p.timeStart)html+=`<div class="vq-parsed-row"><span class="vq-parsed-label">⏰ ${t('lFrom')}:</span><span class="vq-parsed-val">${p.timeStart}${p.timeEnd?' – '+p.timeEnd:''}</span></div>`;
+  if(p.priority&&p.priority!=='low')html+=`<div class="vq-parsed-row"><span class="vq-parsed-label">🚨 ${t('lPrio')}:</span><span class="vq-parsed-val">${p.priority==='urgent'?t('prioUrgent'):t('prioMedium')}</span></div>`;
+  if(p.remind)html+=`<div class="vq-parsed-row"><span class="vq-parsed-label">🔔 ${t('lRemind')}:</span><span class="vq-parsed-val">${p.remindDate?fmtShortDate(p.remindDate)+' ':''}${p.remind}</span></div>`;
+  el.innerHTML=html;
+  el.classList.add('show');
+}
+
+// Парсер: извлекает date/time/priority/remind из фразы
+function parseVoiceTask(text){
+  let t=' '+text.toLowerCase().replace(/[,.]/g,' ').replace(/\s+/g,' ')+' ';
+  const original=text;
+  const r={name:'',date:null,timeStart:null,timeEnd:null,priority:'low',remind:null,remindDate:null};
+  
+  const MONTHS={'январ':1,'феврал':2,'март':3,'апрел':4,'мая':5,'мае':5,'май':5,'июн':6,'июл':7,'август':8,'сентябр':9,'октябр':10,'ноябр':11,'декабр':12,
+    'january':1,'february':2,'march':3,'april':4,'may':5,'june':6,'july':7,'august':8,'september':9,'october':10,'november':11,'december':12,
+    'jan':1,'feb':2,'mar':3,'apr':4,'jun':6,'jul':7,'aug':8,'sep':9,'oct':10,'nov':11,'dec':12};
+  const DAYS_RU={'понедельник':1,'вторник':2,'среда':3,'среду':3,'четверг':4,'пятница':5,'пятницу':5,'суббота':6,'субботу':6,'воскресенье':0};
+  
+  // 1. Приоритет
+  if(/срочн|важн|неотложн|urgent|immediately|asap/.test(t)){r.priority='urgent';t=t.replace(/(статус\s+)?(срочн\w*|важн\w*|неотложн\w*|urgent|immediately|asap)/g,' ');}
+  else if(/средн|обычн|medium|normal/.test(t)){r.priority='medium';t=t.replace(/(статус\s+)?(средн\w*|обычн\w*|medium|normal)/g,' ');}
+  
+  // 2. Напоминание: "напомни ... в HH:MM" / "remind ... at HH:MM"
+  let remindBlock=null;
+  const remindMatch=t.match(/(?:напомни(?:ть)?(?:\s+мне)?(?:\s+о\s+ней)?|remind(?:\s+me)?(?:\s+about\s+it)?)([^.]*?)(?=\s*$|подготов|сделай|нужно|надо|task|приготов)/);
+  if(remindMatch){
+    remindBlock=remindMatch[1];
+    t=t.replace(remindMatch[0],' ');
+  }
+  
+  // 3. Время "с HH:MM до HH:MM" / "from HH to HH"
+  const timeRange=t.match(/(?:с|from|в)\s+(\d{1,2})[:.\s](\d{2})\s+(?:до|to|по)\s+(\d{1,2})[:.\s](\d{2})/);
+  if(timeRange){
+    r.timeStart=`${timeRange[1].padStart(2,'0')}:${timeRange[2]}`;
+    r.timeEnd=`${timeRange[3].padStart(2,'0')}:${timeRange[4]}`;
+    t=t.replace(timeRange[0],' ');
+  } else {
+    const single=t.match(/(?:в|at)\s+(\d{1,2})[:.\s](\d{2})/);
+    if(single){r.timeStart=`${single[1].padStart(2,'0')}:${single[2]}`;t=t.replace(single[0],' ');}
+  }
+  
+  // 4. Дата для напоминания (если есть remindBlock)
+  if(remindBlock){
+    const rDate=parseDateFromText(remindBlock,MONTHS,DAYS_RU);
+    const rTime=remindBlock.match(/(?:в|at)\s+(\d{1,2})[:.\s](\d{2})/);
+    if(rTime)r.remind=`${rTime[1].padStart(2,'0')}:${rTime[2]}`;
+    if(rDate)r.remindDate=rDate;
+  }
+  
+  // 5. Дата основная
+  if(/сегодня|today/.test(t)){r.date=fmt(new Date());t=t.replace(/сегодня|today/g,' ');}
+  else if(/завтра|tomorrow/.test(t)){const d=new Date();d.setDate(d.getDate()+1);r.date=fmt(d);t=t.replace(/завтра|tomorrow/g,' ');}
+  else if(/послезавтра|day after tomorrow/.test(t)){const d=new Date();d.setDate(d.getDate()+2);r.date=fmt(d);t=t.replace(/послезавтра|day after tomorrow/g,' ');}
+  else {
+    const dt=parseDateFromText(t,MONTHS,DAYS_RU);
+    if(dt){r.date=dt;
+      // remove from t
+      for(const k in MONTHS)t=t.replace(new RegExp('\\d{1,2}\\s+'+k+'(\\w+)?(\\s+\\d{4})?','g'),' ');
+    }
+  }
+  
+  // 6. Имя задачи — то что осталось, очищенное
+  r.name=t.replace(/\b(статус|приоритет|status|priority|года|year|в|на|с|до|по)\b/g,' ').replace(/\s+/g,' ').trim();
+  // Капитализируем первую букву
+  if(r.name)r.name=r.name.charAt(0).toUpperCase()+r.name.slice(1);
+  if(!r.name)r.name=original.split(/[.,]/)[0];
+  
+  return r;
+}
+
+function parseDateFromText(t,MONTHS,DAYS_RU){
+  // "25 мая 2026" / "25 мая" / "may 25 2026"
+  let m=t.match(/(\d{1,2})\s+([а-яa-z]+)(?:\s+(\d{4}))?/);
+  if(m){
+    const day=parseInt(m[1]);
+    const monKey=Object.keys(MONTHS).find(k=>m[2].startsWith(k));
+    if(monKey){
+      const mon=MONTHS[monKey];
+      const year=m[3]?parseInt(m[3]):new Date().getFullYear();
+      const dt=new Date(year,mon-1,day,12,0,0);
+      if(dt<new Date()&&!m[3])dt.setFullYear(dt.getFullYear()+1);
+      return fmt(dt);
+    }
+  }
+  // "may 25"
+  m=t.match(/([а-яa-z]+)\s+(\d{1,2})(?:\s+(\d{4}))?/);
+  if(m){
+    const monKey=Object.keys(MONTHS).find(k=>m[1].startsWith(k));
+    if(monKey){
+      const mon=MONTHS[monKey];
+      const day=parseInt(m[2]);
+      const year=m[3]?parseInt(m[3]):new Date().getFullYear();
+      const dt=new Date(year,mon-1,day,12,0,0);
+      if(dt<new Date()&&!m[3])dt.setFullYear(dt.getFullYear()+1);
+      return fmt(dt);
+    }
+  }
+  // День недели
+  for(const k in DAYS_RU){
+    if(t.includes(k)){
+      const d=new Date();
+      const target=DAYS_RU[k];
+      let diff=target-d.getDay();
+      if(diff<=0)diff+=7;
+      d.setDate(d.getDate()+diff);
+      return fmt(d);
+    }
+  }
+  return null;
+}
+
+// ===== ПРЕВЬЮ ВЛОЖЕНИЙ =====
+async function openAttachPreview(attId){
+  const blob=await idbGet(attId).catch(()=>null);
+  if(!blob){showToast('⚠️ Файл недоступен');return;}
+  const url=URL.createObjectURL(blob);
+  const att=noteEditAttachments.find(a=>a.id===attId);
+  if(!att){showToast('⚠️ Метаданные не найдены');return;}
+  const el=document.getElementById('previewContent');
+  if(att.type&&att.type.startsWith('image/')){
+    el.innerHTML=`<img src="${url}" alt="${escHtml(att.name)}">`;
+  } else if(att.type==='application/pdf'){
+    el.innerHTML=`<iframe src="${url}#toolbar=1"></iframe>`;
+  } else if(att.type&&att.type.startsWith('audio/')){
+    el.innerHTML=`<audio controls src="${url}" autoplay></audio>`;
+  } else if(att.type&&att.type.startsWith('video/')){
+    el.innerHTML=`<video controls src="${url}" autoplay></video>`;
+  } else {
+    el.innerHTML=`<div style="background:#fff;padding:30px;border-radius:8px;text-align:center"><div style="font-size:48px;margin-bottom:14px">${fileIcon(att.type)}</div><div style="margin-bottom:14px;color:#333">${escHtml(att.name)}</div><a href="${url}" download="${escHtml(att.name).replace(/"/g,'&quot;')}" style="background:var(--acc);color:#fff;padding:10px 24px;border-radius:9px;text-decoration:none">↓ Скачать</a></div>`;
+  }
+  document.getElementById('previewOv').classList.add('open');
+}
+
+function closePreview(){
+  document.getElementById('previewOv').classList.remove('open');
+  document.getElementById('previewContent').innerHTML='';
+}
+
 // ===== CLOUD SYNC (JSONBin.io) =====
 const JBIN='https://api.jsonbin.io/v3/b';
 function syncPayload(){
@@ -1850,30 +2173,65 @@ function dl(blob,name){
 // ===== HELP CONTENT =====
 const HELP={
   ru:`
-<div class="help-section"><div class="help-h">🏠 Главная</div><div class="help-t">Показывает задачи на выбранный день. Листайте полосу дат горизонтально. Стрелки ‹ › перематывают на неделю. Нажмите + для новой задачи.</div></div>
-<div class="help-section"><div class="help-h">✅ Задачи и подзадачи</div><div class="help-t">При создании задачи добавляйте <b>подзадачи</b> — каждая отмечается отдельно. Прогресс-бар показывает выполнение. Кнопка <b>⏱ Фокус</b> запускает Помодоро-таймер (25 мин работы / 5 мин перерыва).</div></div>
-<div class="help-section"><div class="help-h">🔁 Повторяющиеся задачи</div><div class="help-t">Выберите Повтор при создании задачи. При отметке — следующий экземпляр создаётся автоматически.</div></div>
-<div class="help-section"><div class="help-h">☁️ Облаковая синхронизация</div><div class="help-t">Настройки → блок «Облаковая синхронизация». Сохранить → получите Sync ID → введите на другом устройстве (Подключить) → Загрузить.</div></div>
-<div class="help-section"><div class="help-h">🏷 Теги</div><div class="help-t">Создавайте свои теги в Настройках → «Управление тегами». Выбирайте название и цвет. Теги можно назначать задачам. В разделе «Все» фильтруйте задачи по тегу.</div></div>
-<div class="help-section"><div class="help-h">📝 Заметки и диктофон</div><div class="help-t"><b>+</b> — новая заметка. Кнопка <b>🎙 Голос</b> в редакторе — диктуйте текст, он автоматически добавляется. Говорите «первое», «второе» — получите нумерованный список.<br><br>Виджет <b>Диктофон</b> записывает встречу (аудио + автоматическая расшифровка). После записи слушайте и сохраняйте в заметку.<br><br>К заметкам прикрепляйте любые файлы — фото, документы, аудио.</div></div>
-<div class="help-section"><div class="help-h">📅 Календарь</div><div class="help-t">Нажмите на дату — увидите задачи этого дня. Точки под числами — есть задачи. Навигация стрелками по месяцам.</div></div>
-<div class="help-section"><div class="help-h">⚙️ Настройки</div><div class="help-t">Статистика выполнения, график за неделю, streak-счётчик. Экспорт в JSON/CSV/ICS. Управление тегами. Очистка выполненных задач.</div></div>
-<div class="help-section"><div class="help-h">🎨 Темы</div><div class="help-t">Кнопка «Тема ▾» в шапке — выбор между Тёмной, Светлой и Изумрудной темами.</div></div>
-<div class="help-section"><div class="help-h">🔔 Уведомления</div><div class="help-t">Разрешите уведомления в браузере. Напоминания срабатывают пока Chrome открыт. Для будильника приложение должно быть в активном окне.</div></div>`,
+<div style="background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;padding:18px;border-radius:14px;margin-bottom:14px;text-align:center">
+<div style="font-size:18px;font-weight:700;margin-bottom:8px">🎯 PESKOV Smart Planner</div>
+<div style="font-size:13px;line-height:1.6;opacity:.95">Ваш персональный цифровой помощник для делового человека.<br>Создан Турдалиевым Алишером Рустамовичем на основе многолетнего опыта работы в государственных структурах и частном секторе.</div></div>
+
+<div class="help-section"><div class="help-h">💡 Для чего это приложение</div><div class="help-t">PESKOV объединяет <b>планировщик задач, заметки, диктофон, фокус-таймер и облачное хранилище</b> в одном месте. Больше не нужно носить с собой блокнот, ручку, запоминать встречи, искать документы и адреса. Всё под рукой и работает <b>без интернета</b>. Голосовое управление позволяет быстро создать задачу, не вынимая телефон из кармана.</div></div>
+
+<div class="help-section"><div class="help-h">🎙 Голосовое создание задачи (новое!)</div><div class="help-t">На главной странице — большая кнопка <b>+</b> и круглая кнопка <b>🎙</b> рядом с ней. Нажмите 🎙 и скажите естественной речью:<br><br><i>«Подготовить отчёт двадцать пятого мая в четырнадцать ноль ноль, срочно, напомни двадцать четвёртого мая в двадцать один ноль ноль»</i><br><br>Приложение само распознает: <b>название</b>, <b>дату</b>, <b>время</b>, <b>приоритет</b> и <b>напоминание</b>. Нажмите «✓ Создать» — задача появится в календаре.</div></div>
+
+<div class="help-section"><div class="help-h">🔔 Напоминания — как работают</div><div class="help-t">В установленное время приложение издаст <b>звуковой сигнал</b> и покажет уведомление с двумя кнопками: <b>«✓ Выполнено»</b> и <b>«💤 +10 мин»</b>. Кнопки работают прямо из шторки уведомлений — не нужно открывать приложение.<br><br><b>Важно:</b> для надёжной работы напоминаний:<br>1. <b>Установите PWA на телефон</b> (Chrome → «Добавить на главный экран»)<br>2. Разрешите уведомления при первом запросе<br>3. Не закрывайте приложение полностью</div></div>
+
+<div class="help-section"><div class="help-h">✅ Задачи и подзадачи</div><div class="help-t"><b>Нажмите на задачу</b> — карточка раскроется для редактирования. Чекбокс ✓ — отметить выполненной. Внутри задачи можно создать <b>подзадачи</b> с прогресс-баром и запустить <b>⏱ Фокус-таймер</b> (метод Помодоро: 25 мин работы / 5 мин отдыха).</div></div>
+
+<div class="help-section"><div class="help-h">🔁 Повторяющиеся задачи</div><div class="help-t">При создании выберите <b>Повтор</b>: ежедневно / по будням / еженедельно / ежемесячно. Когда отмечаете выполненной — следующий экземпляр создаётся автоматически.</div></div>
+
+<div class="help-section"><div class="help-h">🏷 Теги</div><div class="help-t">Создавайте свои теги с любым названием и цветом. В Настройках → «Управление тегами». Все теги, включая дефолтные, <b>можно удалить или изменить</b>. В разделе «Все» фильтруйте задачи по тегу.</div></div>
+
+<div class="help-section"><div class="help-h">📝 Заметки и вложения (офлайн!)</div><div class="help-t">К заметкам можно прикреплять:<br>• <b>Фото</b> — маршрут к кафе, скриншоты, чеки<br>• <b>PDF документы</b> — договор для встречи, презентации<br>• <b>Аудио</b> — записи диалогов<br>• <b>Ссылки</b> — на сайты, статьи, локации<br><br>Все файлы хранятся <b>в памяти телефона</b> и открываются <b>без интернета</b>. Идёте на встречу в кафе? Сохраните скриншот карты Яндекса и фото фасада заранее — увидите даже без сети. Нужно обсудить PDF-договор? Откройте прямо в приложении.<br><br><b>👁 Клик по вложению</b> — встроенный просмотрщик (картинки, PDF, аудио, видео).</div></div>
+
+<div class="help-section"><div class="help-h">🎙 Диктофон встреч</div><div class="help-t">Во вкладке «Заметки» сверху — виджет <b>Диктофон</b>. Нажмите ⏺ — записывается <b>аудио + автоматическая расшифровка текста одновременно</b>. ⏹ — остановить. Слушать или сохранить в заметку — все данные останутся.</div></div>
+
+<div class="help-section"><div class="help-h">☁️ Облачная синхронизация — подробно</div><div class="help-t"><b>Зачем нужно:</b> у вас несколько устройств (телефон + ноутбук, личный + рабочий). Синхронизация передаёт данные между ними через защищённое облако.<br><br><b>Безопасность:</b> данные шифруются <b>паролем AES-256</b> у вас на устройстве <i>до</i> отправки в облако. Сервис JSONBin.io видит только зашифрованный текст — даже если кто-то получит к нему доступ, без вашего пароля данные не прочитать.<br><br><b>Шаг 1 (первое устройство — телефон):</b><br>1. Настройки ⚙️ → блок «Облачная синхронизация»<br>2. Нажмите <b>📤 Сохранить</b><br>3. Появится окно «🔐 Установите пароль» — придумайте сложный пароль (запомните!)<br>4. Получите <b>Sync ID</b> (длинный код) — нажмите на него для копирования<br><br><b>Шаг 2 (второе устройство — ноутбук):</b><br>1. Откройте приложение на ноутбуке<br>2. Настройки → «🔗 Подключить»<br>3. Вставьте Sync ID → OK<br>4. Введите <b>тот же пароль</b><br>5. Нажмите <b>📥 Загрузить</b> — все данные появятся<br><br><b>Дальше:</b><br>• Изменили что-то на телефоне → нажали 📤 Сохранить<br>• Открыли ноутбук → нажали 📥 Загрузить<br><br><b>Тарифы:</b> сервис JSONBin.io даёт <b>10 000 запросов в месяц бесплатно</b> — этого хватает для одного человека на годы. Это не наш сервис, мы только используем их API.</div></div>
+
+<div class="help-section"><div class="help-h">📅 Календарь и статистика</div><div class="help-t">Календарь: точки под датами показывают наличие задач. В Настройках: <b>график за неделю</b>, <b>счётчик streak</b> (дней подряд с выполненной задачей), <b>тепловая карта</b> активности за 30 дней.</div></div>
+
+<div class="help-section"><div class="help-h">🎨 Темы и языки</div><div class="help-t">Три темы: <b>Тёмная</b> (по умолчанию), <b>Светлая</b>, <b>Изумрудная</b>. Три языка: <b>RU / EN / UZ</b>. Переключение в шапке приложения.</div></div>
+
+<div class="help-section" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3)"><div class="help-h">💎 Важные советы</div><div class="help-t">• <b>Установите как PWA</b> — Chrome → меню → «Добавить на главный экран». Работает как полноценное приложение.<br>• <b>Регулярно делайте 📤 Сохранить</b> в облаке — это ваш бэкап.<br>• <b>Не теряйте Sync ID и пароль</b> — без них данные из облака не восстановить.<br>• <b>Прикрепляйте фото мест встреч</b> — сэкономите время и нервы.</div></div>
+`,
   en:`
-<div class="help-section"><div class="help-h">🏠 Home</div><div class="help-t">Shows tasks for the selected day. Swipe the date strip horizontally. ‹ › arrows jump a week. Tap + for a new task.</div></div>
-<div class="help-section"><div class="help-h">✅ Tasks & subtasks</div><div class="help-t">Add <b>subtasks</b> when creating a task — each checked separately. Progress bar shows completion. <b>⏱ Focus</b> button starts a Pomodoro timer (25 min work / 5 min break).</div></div>
-<div class="help-section"><div class="help-h">🏷 Tags</div><div class="help-t">Create custom tags in Settings → Tag management. Choose name and color. Assign to tasks. Filter by tag in the All tab.</div></div>
-<div class="help-section"><div class="help-h">📝 Notes & recorder</div><div class="help-t"><b>+</b> — new note. <b>🎙 Voice</b> button — dictate text, it's added automatically. Say "first", "second" — get a numbered list.<br><br><b>Recorder</b> widget records meetings (audio + live transcript). Play back and save as a note.<br><br>Attach any files to notes.</div></div>
-<div class="help-section"><div class="help-h">📅 Calendar</div><div class="help-t">Tap a date to see its tasks. Dots = tasks exist. Navigate months with arrows.</div></div>
-<div class="help-section"><div class="help-h">⚙️ Settings</div><div class="help-t">Completion stats, weekly chart, streak counter. Export JSON/CSV/ICS. Tag management. Clear done tasks.</div></div>`,
+<div style="background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;padding:18px;border-radius:14px;margin-bottom:14px;text-align:center">
+<div style="font-size:18px;font-weight:700;margin-bottom:8px">🎯 PESKOV Smart Planner</div>
+<div style="font-size:13px;line-height:1.6;opacity:.95">Your personal digital assistant for the busy professional.<br>Created by Alisher Rustamovich Turdaliev based on years of experience in government and private sector.</div></div>
+
+<div class="help-section"><div class="help-h">💡 What this app does</div><div class="help-t">PESKOV combines <b>task planner, notes, voice recorder, focus timer, and cloud storage</b> in one place. No more notebooks, pens, forgotten meetings, or hunting for documents. Everything is at your fingertips and <b>works offline</b>. Voice control lets you create tasks instantly.</div></div>
+
+<div class="help-section"><div class="help-h">🎙 Voice task creation</div><div class="help-t">On the home screen — big <b>+</b> button and round <b>🎙</b> button next to it. Press 🎙 and speak naturally:<br><br><i>"Prepare report on May 25 at 14:00, urgent, remind me May 24 at 21:00"</i><br><br>The app extracts: name, date, time, priority, reminder. Press "✓ Create" — task added.</div></div>
+
+<div class="help-section"><div class="help-h">🔔 Reminders</div><div class="help-t">At the set time, the app plays a <b>sound</b> and shows a notification with <b>"✓ Done"</b> and <b>"💤 +10 min"</b> buttons — work directly from the notification shade.<br><br><b>For reliability:</b> Install as PWA on phone, allow notifications, don't fully close the app.</div></div>
+
+<div class="help-section"><div class="help-h">📝 Notes & offline attachments</div><div class="help-t">Attach to notes: <b>photos</b> (maps to cafes, screenshots), <b>PDF documents</b> (contracts for meetings), <b>audio</b>, <b>links</b>. All files are stored in phone memory and open <b>without internet</b>. Going to a meeting at a cafe? Save the map screenshot and facade photo in advance.</div></div>
+
+<div class="help-section"><div class="help-h">☁️ Cloud sync — detailed</div><div class="help-t"><b>Security:</b> data is encrypted with <b>AES-256 password</b> on your device before being sent to cloud.<br><br><b>Step 1 (first device):</b><br>1. Settings → Cloud sync → 📤 Save<br>2. Set a password<br>3. Get Sync ID — tap to copy<br><br><b>Step 2 (second device):</b><br>1. Settings → 🔗 Connect<br>2. Paste Sync ID<br>3. Enter same password<br>4. 📥 Load<br><br>Service: JSONBin.io, 10,000 requests/month free.</div></div>
+
+<div class="help-section"><div class="help-h">🏷 Tags, themes, languages</div><div class="help-t">Create custom tags with any name and color. All tags including defaults can be deleted. 3 themes: Dark / Light / Emerald. 3 languages: RU / EN / UZ.</div></div>
+`,
   uz:`
-<div class="help-section"><div class="help-h">🏠 Asosiy</div><div class="help-t">Tanlangan kun uchun vazifalarni ko'rsatadi. Sana chizig'ini gorizontal suring. ‹ › — bir hafta. + yangi vazifa.</div></div>
-<div class="help-section"><div class="help-h">✅ Vazifalar va kichik vazifalar</div><div class="help-t">Vazifa yaratishda <b>kichik vazifalar</b> qo'shing. <b>⏱ Fokus</b> — Pomodoro taymeri (25 daq ish / 5 daq tanaffus).</div></div>
-<div class="help-section"><div class="help-h">🏷 Teglar</div><div class="help-t">Sozlamalarda o'z teglaringizni yarating. Nom va rang tanlang. Vazifalarga biriktiring.</div></div>
-<div class="help-section"><div class="help-h">📝 Eslatmalar va diktofon</div><div class="help-t">+ — yangi eslatma. 🎙 Ovoz tugmasi — matnni diktovka qiling. Diktofon uchrashuv yozadi.</div></div>`
+<div style="background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;padding:18px;border-radius:14px;margin-bottom:14px;text-align:center">
+<div style="font-size:18px;font-weight:700;margin-bottom:8px">🎯 PESKOV Smart Planner</div>
+<div style="font-size:13px;line-height:1.6;opacity:.95">Ishbilarmon odam uchun shaxsiy raqamli yordamchi.<br>Turdaliyev Alisher Rustamovich tomonidan davlat va xususiy sektordagi ko'p yillik tajribaga asoslangan holda yaratilgan.</div></div>
+
+<div class="help-section"><div class="help-h">💡 Bu ilova nima qiladi</div><div class="help-t">PESKOV vazifalar rejalashtiruvchisi, eslatmalar, diktofon, fokus taymeri va bulutli saqlashni bitta joyda birlashtiradi. <b>Internetsiz ishlaydi</b>. Ovozli boshqaruv tezda vazifa yaratishga imkon beradi.</div></div>
+
+<div class="help-section"><div class="help-h">🎙 Ovozli vazifa yaratish</div><div class="help-t">Asosiy sahifada katta <b>+</b> tugmasi va yonida <b>🎙</b> tugmasi. 🎙 ni bosing va aytib bering:<br><br><i>"25-may soat 14:00 da hisobot tayyorlash, shoshilinch, 24-may soat 21:00 ga eslatish"</i><br><br>Ilova nomini, sanasini, vaqtini, muhimligini va eslatmasini ajratib oladi.</div></div>
+
+<div class="help-section"><div class="help-h">☁️ Bulutli sinxronizatsiya</div><div class="help-t">Sozlamalar → Bulutli sinxronizatsiya → 📤 Saqlash → parol o'rnating → Sync ID oling. Boshqa qurilmada: 🔗 Ulanish → Sync ID kiriting → parol → 📥 Yuklab olish.</div></div>
+`
 };
 let helpLang='ru';
+
 function openHelp(){helpLang=lang;renderHelp();document.getElementById('helpOv').classList.add('open');}
 function setHelpLang(l){helpLang=l;['ru','en','uz'].forEach(x=>document.getElementById('hl_'+x).classList.toggle('on',x===l));renderHelp();}
 function renderHelp(){

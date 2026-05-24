@@ -1,40 +1,65 @@
 {
   "name": "PESKOV Smart Planner",
   "short_name": "PESKOV",
-  "description": "Ваш персональный цифровой помощник: задачи, заметки, диктофон, фокус-таймер. Работает офлайн.",
-  "start_url": "/",
+  "version": "6.1.0",
+  "description": "Ваш персональный цифровой помощник: задачи, заметки, диктофон, фокус-таймер, голосовое управление, облачная синхронизация. Работает офлайн.",
+  "start_url": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#0f172a",
   "theme_color": "#3d4fd4",
   "lang": "ru",
-  "scope": "/",
+  "dir": "ltr",
+  "scope": "./",
+  "categories": ["productivity", "business", "utilities"],
   "icons": [
     {
       "src": "icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
   "shortcuts": [
     {
       "name": "Новая задача",
       "short_name": "Задача",
-      "url": "/?action=new",
+      "description": "Создать новую задачу",
+      "url": "./?action=new",
       "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
     },
     {
       "name": "Заметки",
       "short_name": "Заметки",
-      "url": "/?tab=3",
+      "description": "Открыть заметки",
+      "url": "./?tab=3",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Календарь",
+      "short_name": "Календарь",
+      "description": "Открыть календарь",
+      "url": "./?tab=1",
       "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
     }
-  ]
+  ],
+  "prefer_related_applications": false
 }

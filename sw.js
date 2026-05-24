@@ -1,5 +1,5 @@
 // PESKOV Smart Planner — Service Worker v6
-const CACHE = 'peskov-v6';
+const CACHE = 'peskov-v6-1';
 const ASSETS = ['/', '/index.html', '/manifest.json', '/icon-192.png', '/icon-512.png', '/apple-touch-icon.png'];
 
 self.addEventListener('install', e => {

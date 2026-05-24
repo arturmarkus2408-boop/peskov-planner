@@ -1463,38 +1463,34 @@ function startNoteVoice(){
   stopNoteVoice();
   const ta=document.getElementById('nText');
   let baseText=(ta?ta.value:'').trim();
-  // Дедупликация: храним последний добавленный фрагмент
-  let lastAdded='';
+  // ВАЖНО: continuous=false — каждая сессия = одна фраза.
+  // Это устраняет накопление контекста Chrome при перезапуске.
   noteSpeech=new SR();
   noteSpeech.lang=lang==='uz'?'uz-UZ':lang==='en'?'en-US':'ru-RU';
-  noteSpeech.continuous=true;
+  noteSpeech.continuous=false;
   noteSpeech.interimResults=false;
   noteSpeech.maxAlternatives=1;
   noteSpeech.onresult=e=>{
-    for(let i=e.resultIndex;i<e.results.length;i++){
-      if(!e.results[i].isFinal)continue;
-      const raw=e.results[i][0].transcript.trim();
-      if(!raw)continue;
-      // Пропустить если это повтор последнего результата
-      if(raw===lastAdded||raw===lastAdded+' '+lastAdded)continue;
-      // Пропустить если содержит только повторяющиеся слова
-      const words=raw.split(' ');
-      const unique=new Set(words.map(w=>w.toLowerCase()));
-      if(words.length>=4&&unique.size<=words.length/3)continue;
-      lastAdded=raw;
-      const converted=convertNumberWords(raw);
-      const formatted=formatNoteTranscript(converted);
-      baseText=(baseText+(baseText?'\n':'')+formatted).trim();
-      if(ta)ta.value=baseText;
-    }
+    if(!e.results||!e.results.length)return;
+    // continuous=false: всегда читаем только последний (нулевой) результат
+    const res=e.results[e.results.length-1];
+    if(!res.isFinal)return;
+    const raw=(res[0].transcript||'').trim();
+    if(!raw)return;
+    const converted=convertNumberWords(raw);
+    const formatted=formatNoteTranscript(converted);
+    baseText=(baseText+(baseText?' ':'')+formatted).trim();
+    if(ta)ta.value=baseText;
   };
   noteSpeech.onerror=e=>{
     if(e.error!=='no-speech'&&e.error!=='aborted')stopNoteVoice();
   };
   noteSpeech.onend=()=>{
-    if(noteRecOn&&noteSpeech){
-      // Сбросить lastAdded при перезапуске чтобы не блокировать новый ввод
-      try{noteSpeech.start();}catch(ex){}
+    // Перезапуск через таймаут — новая сессия, контекст обнуляется
+    if(noteRecOn){
+      setTimeout(()=>{
+        if(noteRecOn&&noteSpeech){try{noteSpeech.start();}catch(ex){}}
+      },150);
     }
   };
   noteRecOn=true;
@@ -1647,7 +1643,7 @@ function dictStart(){
     if(SR){
       dictSpeech=new SR();
       dictSpeech.lang=lang==='uz'?'uz-UZ':lang==='en'?'en-US':'ru-RU';
-      dictSpeech.continuous=true;dictSpeech.interimResults=false;
+      dictSpeech.continuous=false;dictSpeech.interimResults=false;
       dictSpeech.onresult=e=>{
         for(let i=e.resultIndex;i<e.results.length;i++){
           if(e.results[i].isFinal)dictTranscript+=(dictTranscript?' ':'')+e.results[i][0].transcript.trim();
@@ -1758,8 +1754,9 @@ function openVoiceQuickAdd(){
   if(vqRec)try{vqRec.abort();}catch(e){}
   vqRec=new SR();
   vqRec.lang=lang==='uz'?'uz-UZ':lang==='en'?'en-US':'ru-RU';
-  vqRec.continuous=true;
-  vqRec.interimResults=true;
+  // continuous=false — каждая сессия одна фраза, нет накопления Chrome
+  vqRec.continuous=false;
+  vqRec.interimResults=false;
   vqRec.maxAlternatives=1;
   document.getElementById('vqResult').textContent='';
   document.getElementById('vqParsed').classList.remove('show');
@@ -1768,25 +1765,28 @@ function openVoiceQuickAdd(){
   document.getElementById('vqOkBtn').style.display='none';
   document.getElementById('voiceQuickOv').classList.add('open');
   vqRecOn=true;
-  let finalTxt='';let vqLastAdded='';
+  let finalTxt='';
   vqRec.onresult=e=>{
-    let interim='';
-    for(let i=e.resultIndex;i<e.results.length;i++){
-      if(e.results[i].isFinal){
-        const seg=e.results[i][0].transcript.trim();
-        if(seg&&seg!==vqLastAdded){finalTxt+=' '+seg;vqLastAdded=seg;}
-      } else interim+=e.results[i][0].transcript;
-    }
-    vqText=(finalTxt+' '+interim).trim();
+    if(!e.results||!e.results.length)return;
+    const res=e.results[e.results.length-1];
+    if(!res.isFinal)return;
+    const seg=(res[0].transcript||'').trim();
+    if(!seg)return;
+    finalTxt=(finalTxt+' '+seg).trim();
+    vqText=finalTxt;
     document.getElementById('vqResult').textContent=vqText;
-    if(finalTxt.trim()){
-      vqParsed=parseVoiceTask(finalTxt);
-      showParsed(vqParsed);
-      document.getElementById('vqOkBtn').style.display='inline-block';
-    }
+    vqParsed=parseVoiceTask(finalTxt);
+    showParsed(vqParsed);
+    document.getElementById('vqOkBtn').style.display='inline-block';
   };
   vqRec.onerror=e=>{if(e.error!=='no-speech'&&e.error!=='aborted'){document.getElementById('vqStatus').textContent='⚠️ '+e.error;}};
-  vqRec.onend=()=>{if(vqRecOn)try{vqRec.start();}catch(ex){}};
+  vqRec.onend=()=>{
+    if(vqRecOn){
+      setTimeout(()=>{
+        if(vqRecOn&&vqRec){try{vqRec.start();}catch(ex){}}
+      },150);
+    }
+  };
   try{vqRec.start();}catch(e){showToast('⚠️ Микрофон занят');}
 }
 

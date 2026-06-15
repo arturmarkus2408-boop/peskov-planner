@@ -1,6 +1,7 @@
 // PESKOV Smart Planner — Service Worker v6
-const CACHE = 'peskov-v6-1';
-const ASSETS = ['/', '/index.html', '/manifest.json', '/icon-192.png', '/icon-512.png', '/apple-touch-icon.png'];
+const CACHE = 'peskov-v6-2';
+// Относительные пути — работают и в корне домена, и в подпапке (GitHub Pages /peskov-planner/)
+const ASSETS = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})).then(() => self.skipWaiting()));
@@ -18,13 +19,15 @@ self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
   if (!e.request.url.startsWith('http')) return;
   const url = new URL(e.request.url);
-  const isHTML = url.pathname === '/' || url.pathname.endsWith('.html');
+  const scope = new URL(self.registration.scope).pathname; // напр. "/peskov-planner/"
+  const indexUrl = scope + 'index.html';
+  const isHTML = url.pathname === scope || url.pathname.endsWith('.html');
   if (isHTML) {
     e.respondWith(
       fetch(e.request).then(res => {
         if (res && res.status === 200) caches.open(CACHE).then(c => c.put(e.request, res.clone()));
         return res;
-      }).catch(() => caches.match(e.request).then(c => c || caches.match('/index.html')))
+      }).catch(() => caches.match(e.request).then(c => c || caches.match(indexUrl)))
     );
   } else {
     e.respondWith(
@@ -33,7 +36,7 @@ self.addEventListener('fetch', e => {
         return fetch(e.request).then(res => {
           if (res && res.status === 200) caches.open(CACHE).then(c => c.put(e.request, res.clone()));
           return res;
-        }).catch(() => caches.match('/index.html'));
+        }).catch(() => caches.match(indexUrl));
       })
     );
   }
@@ -46,7 +49,7 @@ self.addEventListener('notificationclick', e => {
     e.waitUntil(clients.matchAll({ type: 'window', includeUncontrolled: true }).then(cls => {
       cls.forEach(c => c.postMessage({ type: 'markDone', taskId }));
       if (cls.length > 0) return cls[0].focus();
-      return clients.openWindow('/');
+      return clients.openWindow(self.registration.scope);
     }));
   } else if (e.action === 'snooze' && taskId) {
     e.waitUntil(clients.matchAll({ type: 'window', includeUncontrolled: true }).then(cls => {
@@ -55,7 +58,7 @@ self.addEventListener('notificationclick', e => {
   } else {
     e.waitUntil(clients.matchAll({ type: 'window', includeUncontrolled: true }).then(cls => {
       for (const c of cls) if ('focus' in c) return c.focus();
-      return clients.openWindow('/');
+      return clients.openWindow(self.registration.scope);
     }));
   }
 });

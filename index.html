@@ -1549,7 +1549,29 @@ function convertNumberWords(text){
     'девятьсот':900,'девятисот':900,
     'тысяча':1000,'тысячи':1000,'тысяч':1000,'тысячу':1000,
     'миллион':1000000,'миллиона':1000000,'миллионов':1000000,
-    'миллиард':1000000000,'миллиарда':1000000000
+    'миллиард':1000000000,'миллиарда':1000000000,
+    // Порядковые/родительные формы — для дат («двадцать пятого мая», «двадцатого числа»)
+    'первое':1,'первого':1,'первый':1,'первая':1,
+    'второе':2,'второго':2,'второй':2,'вторая':2,
+    'третье':3,'третьего':3,'третий':3,'третья':3,
+    'четвёртое':4,'четвертое':4,'четвёртого':4,'четвертого':4,'четвёртый':4,'четвертый':4,
+    'пятое':5,'пятого':5,'пятый':5,
+    'шестое':6,'шестого':6,'шестой':6,
+    'седьмое':7,'седьмого':7,'седьмой':7,
+    'восьмое':8,'восьмого':8,'восьмой':8,
+    'девятое':9,'девятого':9,'девятый':9,
+    'десятое':10,'десятого':10,'десятый':10,
+    'одиннадцатое':11,'одиннадцатого':11,
+    'двенадцатое':12,'двенадцатого':12,
+    'тринадцатое':13,'тринадцатого':13,
+    'четырнадцатое':14,'четырнадцатого':14,
+    'пятнадцатое':15,'пятнадцатого':15,
+    'шестнадцатое':16,'шестнадцатого':16,
+    'семнадцатое':17,'семнадцатого':17,
+    'восемнадцатое':18,'восемнадцатого':18,
+    'девятнадцатое':19,'девятнадцатого':19,
+    'двадцатое':20,'двадцатого':20,
+    'тридцатое':30,'тридцатого':30
   };
   const EN_NUMS={
     'zero':0,'one':1,'two':2,'three':3,'four':4,'five':5,
@@ -1578,11 +1600,12 @@ function convertNumberWords(text){
       const v=numMap[wl];
       if(acc===null){acc=v;}
       else{
-        // composing: twenty+one=21, hundred*2+30=230 etc.
+        // составные: «двадцать пять»=25, «сто двадцать»=120, «две тысячи»=2000.
+        // НО «тринадцать тридцать» (13:30) — это два разных числа, не 43.
         if(v>=1000&&acc>0){acc=acc*v;}
         else if(v===100&&acc>0&&acc<10){acc=acc*100;}
-        else if(v<acc%100||v>=100){acc=acc+v;}
-        else{acc=acc+v;}
+        else if(v<acc||acc%100===0||v>=100){acc=acc+v;}
+        else{out.push(String(acc));acc=v;}
       }
       lastWasNum=true;
     } else {
@@ -1813,7 +1836,7 @@ function vqApply(){
     done:false,
     remind:vqParsed.remind||null,
     remindDate:vqParsed.remindDate||null,
-    note:'',
+    note:vqParsed.raw||vqText||'',
     tags:[],
     subtasks:[],
     attachments:[],
@@ -1843,9 +1866,11 @@ function showParsed(p){
 
 // Парсер: извлекает date/time/priority/remind из фразы
 function parseVoiceTask(text){
-  let t=' '+text.toLowerCase().replace(/[,.]/g,' ').replace(/\s+/g,' ')+' ';
   const original=text;
-  const r={name:'',date:null,timeStart:null,timeEnd:null,priority:'low',remind:null,remindDate:null};
+  // Сначала превращаем числительные слова в цифры: «двадцать пятого мая» → «25 мая»
+  const normalized=convertNumberWords(text);
+  let t=' '+normalized.toLowerCase().replace(/[,.]/g,' ').replace(/\s+/g,' ')+' ';
+  const r={name:'',date:null,timeStart:null,timeEnd:null,priority:'low',remind:null,remindDate:null,raw:original};
   
   const MONTHS={'январ':1,'феврал':2,'март':3,'апрел':4,'мая':5,'мае':5,'май':5,'июн':6,'июл':7,'август':8,'сентябр':9,'октябр':10,'ноябр':11,'декабр':12,
     'january':1,'february':2,'march':3,'april':4,'may':5,'june':6,'july':7,'august':8,'september':9,'october':10,'november':11,'december':12,
@@ -1853,8 +1878,8 @@ function parseVoiceTask(text){
   const DAYS_RU={'понедельник':1,'вторник':2,'среда':3,'среду':3,'четверг':4,'пятница':5,'пятницу':5,'суббота':6,'субботу':6,'воскресенье':0};
   
   // 1. Приоритет
-  if(/срочн|важн|неотложн|urgent|immediately|asap/.test(t)){r.priority='urgent';t=t.replace(/(статус\s+)?(срочн\w*|важн\w*|неотложн\w*|urgent|immediately|asap)/g,' ');}
-  else if(/средн|обычн|medium|normal/.test(t)){r.priority='medium';t=t.replace(/(статус\s+)?(средн\w*|обычн\w*|medium|normal)/g,' ');}
+  if(/срочн|важн|неотложн|urgent|immediately|asap/.test(t)){r.priority='urgent';t=t.replace(/(статус\s+)?(срочн[а-яё]*|важн[а-яё]*|неотложн[а-яё]*|urgent|immediately|asap)/g,' ');}
+  else if(/средн|обычн|medium|normal/.test(t)){r.priority='medium';t=t.replace(/(статус\s+)?(средн[а-яё]*|обычн[а-яё]*|medium|normal)/g,' ');}
   
   // 2. Напоминание: "напомни ... в HH:MM" / "remind ... at HH:MM"
   let remindBlock=null;
@@ -1864,43 +1889,48 @@ function parseVoiceTask(text){
     t=t.replace(remindMatch[0],' ');
   }
   
-  // 3. Время "с HH:MM до HH:MM" / "from HH to HH"
-  const timeRange=t.match(/(?:с|from|в)\s+(\d{1,2})[:.\s](\d{2})\s+(?:до|to|по)\s+(\d{1,2})[:.\s](\d{2})/);
+  // 3. Время "с HH[:MM] до HH[:MM]" — минуты необязательны: «с 10 до 12» = 10:00–12:00
+  const timeRange=t.match(/(?:с|from|в)\s+(\d{1,2})(?:[:.\s](\d{2}))?\s+(?:до|to|по)\s+(\d{1,2})(?:[:.\s](\d{2}))?/);
   if(timeRange){
-    r.timeStart=`${timeRange[1].padStart(2,'0')}:${timeRange[2]}`;
-    r.timeEnd=`${timeRange[3].padStart(2,'0')}:${timeRange[4]}`;
+    r.timeStart=`${timeRange[1].padStart(2,'0')}:${timeRange[2]||'00'}`;
+    r.timeEnd=`${timeRange[3].padStart(2,'0')}:${timeRange[4]||'00'}`;
     t=t.replace(timeRange[0],' ');
   } else {
-    const single=t.match(/(?:в|at)\s+(\d{1,2})[:.\s](\d{2})/);
+    const single=t.match(/(?:в|at)\s+(\d{1,2})[:.](\d{2})/);
     if(single){r.timeStart=`${single[1].padStart(2,'0')}:${single[2]}`;t=t.replace(single[0],' ');}
   }
   
-  // 4. Дата для напоминания (если есть remindBlock)
+  // 4. Дата для напоминания (если есть remindBlock). Минуты у времени необязательны
   if(remindBlock){
     const rDate=parseDateFromText(remindBlock,MONTHS,DAYS_RU);
-    const rTime=remindBlock.match(/(?:в|at)\s+(\d{1,2})[:.\s](\d{2})/);
-    if(rTime)r.remind=`${rTime[1].padStart(2,'0')}:${rTime[2]}`;
+    const rTime=remindBlock.match(/(?:в|at)\s+(\d{1,2})(?:[:.](\d{2}))?/);
+    if(rTime)r.remind=`${rTime[1].padStart(2,'0')}:${rTime[2]||'00'}`;
     if(rDate)r.remindDate=rDate;
   }
-  
-  // 5. Дата основная
+
+  // 5. Дата основная (послезавтра проверяем ДО завтра — иначе ловится подстрока «завтра»)
   if(/сегодня|today/.test(t)){r.date=fmt(new Date());t=t.replace(/сегодня|today/g,' ');}
-  else if(/завтра|tomorrow/.test(t)){const d=new Date();d.setDate(d.getDate()+1);r.date=fmt(d);t=t.replace(/завтра|tomorrow/g,' ');}
   else if(/послезавтра|day after tomorrow/.test(t)){const d=new Date();d.setDate(d.getDate()+2);r.date=fmt(d);t=t.replace(/послезавтра|day after tomorrow/g,' ');}
+  else if(/завтра|tomorrow/.test(t)){const d=new Date();d.setDate(d.getDate()+1);r.date=fmt(d);t=t.replace(/завтра|tomorrow/g,' ');}
   else {
     const dt=parseDateFromText(t,MONTHS,DAYS_RU);
-    if(dt){r.date=dt;
-      // remove from t
-      for(const k in MONTHS)t=t.replace(new RegExp('\\d{1,2}\\s+'+k+'(\\w+)?(\\s+\\d{4})?','g'),' ');
-    }
+    if(dt)r.date=dt;
   }
-  
-  // 6. Имя задачи — то что осталось, очищенное
-  r.name=t.replace(/\b(статус|приоритет|status|priority|года|year|в|на|с|до|по)\b/g,' ').replace(/\s+/g,' ').trim();
+  // Вычищаем распознанные куски даты (\w не ловит кириллицу — используем [а-яё])
+  for(const k in MONTHS)t=t.replace(new RegExp('\\d{1,2}\\s+'+k+'[а-яё]*(\\s+\\d{4})?','g'),' ');
+  for(const k in MONTHS)t=t.replace(new RegExp(k+'[а-яё]*\\s+\\d{1,2}(\\s+\\d{4})?','g'),' ');
+  for(const k in DAYS_RU)t=t.replace(new RegExp('(?:^|\\s)'+k+'(?=\\s|$)','g'),' ');
+  t=t.replace(/(?:на|к)?\s*\d{1,2}\s*(?:числ[а-яё]+|-?е|-?го)/g,' ');
+  t=t.replace(/числ[а-яё]+/g,' ');
+  t=t.replace(/\d{4}\s*(?:год[а-яё]*)?/g,' ');
+
+  // 6. Имя задачи — оставшиеся слова без служебных (граница \b не работает вокруг кириллицы)
+  const STOP=new Set(['статус','приоритет','status','priority','год','года','году','year','в','во','на','к','с','со','до','по','от','числа','число','числу']);
+  r.name=t.split(/\s+/).filter(w=>w&&!STOP.has(w)).join(' ').trim();
   // Капитализируем первую букву
   if(r.name)r.name=r.name.charAt(0).toUpperCase()+r.name.slice(1);
-  if(!r.name)r.name=original.split(/[.,]/)[0];
-  
+  if(!r.name)r.name=convertNumberWords(original).split(/[.,]/)[0];
+
   return r;
 }
 
@@ -1940,6 +1970,18 @@ function parseDateFromText(t,MONTHS,DAYS_RU){
       if(diff<=0)diff+=7;
       d.setDate(d.getDate()+diff);
       return fmt(d);
+    }
+  }
+  // День без месяца: «20 число», «20-е», «на 20», «к 20» → ближайшее такое число
+  let dm=t.match(/(\d{1,2})\s*(?:числ[а-яё]+|-е|-го)/);
+  if(!dm)dm=t.match(/(?:на|к)\s+(\d{1,2})(?=\s|$)/);
+  if(dm){
+    const day=parseInt(dm[1]);
+    if(day>=1&&day<=31){
+      const now=new Date();
+      let dt=new Date(now.getFullYear(),now.getMonth(),day,12,0,0);
+      if(dt<now)dt=new Date(now.getFullYear(),now.getMonth()+1,day,12,0,0);
+      return fmt(dt);
     }
   }
   return null;
@@ -2113,15 +2155,18 @@ function playAlarm(){
 }
 function showSysNotif(title,body,taskId){
   if(Notification.permission!=='granted')return;
-  if(notified.has(taskId+title))return;
-  notified.add(taskId+title);
+  const key=taskId+'|'+title+'|'+body;
+  if(notified.has(key))return;
+  notified.add(key);
+  // не даём множеству расти бесконечно
+  if(notified.size>200)notified=new Set([...notified].slice(-200));
   localStorage.setItem('pp_notified',JSON.stringify([...notified]));
   if('serviceWorker' in navigator){
     navigator.serviceWorker.ready.then(sw=>{
-      sw.showNotification(title,{body,icon:'/icon-192.png',data:{taskId},
+      sw.showNotification(title,{body,icon:'icon-192.png',data:{taskId},
         actions:[{action:'done',title:'✓ Выполнено'},{action:'snooze',title:'💤 +10 мин'}]});
-    }).catch(()=>new Notification(title,{body,icon:'/icon-192.png'}));
-  } else new Notification(title,{body,icon:'/icon-192.png'});
+    }).catch(()=>new Notification(title,{body,icon:'icon-192.png'}));
+  } else new Notification(title,{body,icon:'icon-192.png'});
 }
 function showUrgentAlert(tk,ico){
   alertTaskId=tk.id;
@@ -2131,13 +2176,19 @@ function showUrgentAlert(tk,ico){
   document.getElementById('alertOv').classList.add('open');
 }
 function closeAlert(){document.getElementById('alertOv').classList.remove('open');alertTaskId=null;}
+// Сбрасываем «уже показано» для задачи, чтобы отложенное напоминание сработало повторно
+function clearNotified(taskId){
+  let changed=false;
+  [...notified].forEach(k=>{if(k.startsWith(taskId+'|')){notified.delete(k);changed=true;}});
+  if(changed)localStorage.setItem('pp_notified',JSON.stringify([...notified]));
+}
 function snooze(){
   if(alertTaskId){
     const tk=tasks.find(x=>x.id===alertTaskId);
     if(tk){
       const now=new Date();now.setMinutes(now.getMinutes()+10);
       tk.remind=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
-      save();scheduleReminders();
+      clearNotified(tk.id);save();scheduleReminders();
     }
   }
   closeAlert();showToast('💤 +10 мин');
@@ -2279,11 +2330,11 @@ function init(){
   ['ru','en','uz'].forEach(x=>{const b=document.getElementById('lb_'+x);if(b)b.classList.toggle('on',x===lang);});
   renderDstrip();renderAll();scheduleReminders();
   if('serviceWorker' in navigator){
-    navigator.serviceWorker.register('/sw.js').catch(()=>{});
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
     navigator.serviceWorker.addEventListener('message',e=>{
       if(!e.data)return;
       if(e.data.type==='markDone'&&e.data.taskId){const tk=tasks.find(x=>x.id===e.data.taskId);if(tk&&!tk.done){toggleTask(e.data.taskId);showToast('✅ Выполнено');}}
-      if(e.data.type==='snooze'&&e.data.taskId){const tk=tasks.find(x=>x.id===e.data.taskId);if(tk){const n=new Date();n.setMinutes(n.getMinutes()+10);tk.remind=n.getHours().toString().padStart(2,'0')+':'+n.getMinutes().toString().padStart(2,'0');save();scheduleReminders();showToast('💤 +10 мин');}}
+      if(e.data.type==='snooze'&&e.data.taskId){const tk=tasks.find(x=>x.id===e.data.taskId);if(tk){const n=new Date();n.setMinutes(n.getMinutes()+10);tk.remind=n.getHours().toString().padStart(2,'0')+':'+n.getMinutes().toString().padStart(2,'0');clearNotified(tk.id);save();scheduleReminders();showToast('💤 +10 мин');}}
     });
   }
   // Check overdue on start (silent)
